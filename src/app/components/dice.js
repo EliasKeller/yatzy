@@ -2,13 +2,26 @@
 
 import { useEffect, useState } from "react";
 
-export default function Dice({ rollTrigger }) {
+export default function Dice({ id, isSelected, rollTrigger, onValueChange, onClick }) {
   const [currentNumber, setCurrentNumber] = useState(1);
   const [isRolling, setIsRolling] = useState(false);
-  const [isSelected, setIsSelected] = useState(false);
+
+  /*useEffect(() => {
+    console.log("--------- (DICE " + id + ") clearSelectionTrigger received (" + clearSelectionTrigger + ") ---------");
+
+    if (rollTrigger === 0) { 
+      return;
+    }
+
+    setIsSelected(false);
+  }, [clearSelectionTrigger]);*/
 
   useEffect(() => {
-    if (rollTrigger === 0) return;
+    console.log("--------- (DICE " + id + ") rollTrigger received (" + rollTrigger + ") ---------");
+
+    if (rollTrigger === 0) {
+      return;
+    }
 
     setIsRolling(true);
     let rollCount = 0;
@@ -23,12 +36,17 @@ export default function Dice({ rollTrigger }) {
       if (rollCount >= 10) {
         clearInterval(rollInterval);
         setCurrentNumber(Math.floor(Math.random() * 6) + 1);
+        onValueChange(id, currentNumber);
         setIsRolling(false);
       }
     }, 100);
 
     return () => clearInterval(rollInterval);
   }, [rollTrigger]);
+
+  /* 
+  Dice Design  
+  */
 
   const getDotPositions = (number) => {
     const positions = {
@@ -60,7 +78,7 @@ export default function Dice({ rollTrigger }) {
         isRolling ? "animate-[roll_800ms_ease-in-out_infinite]" : "hover:scale-105",
         isSelected ? "bg-gray-800" : "bg-white",
       ].join(" ")}
-      onClick={() => setIsSelected(!isSelected)}
+      onClick={() => onClick(id)}
     >
       <div className="absolute inset-2 grid grid-cols-3 grid-rows-3 gap-1 place-items-center">
         {Array.from({ length: 9 }).map((_, index) => {
