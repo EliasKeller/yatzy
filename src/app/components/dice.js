@@ -2,10 +2,16 @@
 
 import { useEffect, useState } from "react";
 
-export default function Dice({ rollTrigger }) {
-  const [currentNumber, setCurrentNumber] = useState(1);
+export default function Dice({ index, initValue, initIsSelected, rollTrigger, resetTrigger, onValueChange }) {
+  const [currentValue, setCurrentValue] = useState(initValue);
   const [isRolling, setIsRolling] = useState(false);
-  const [isSelected, setIsSelected] = useState(false);
+  const [isSelected, setIsSelected] = useState(initIsSelected);
+
+
+  useEffect(() => {
+    setCurrentValue(initValue);
+    setIsSelected(initIsSelected);
+  }, [resetTrigger, initValue, initIsSelected]);
 
   useEffect(() => {
     if (rollTrigger === 0) return;
@@ -17,12 +23,14 @@ export default function Dice({ rollTrigger }) {
       if (isSelected){
         return;
       } 
-      setCurrentNumber(Math.floor(Math.random() * 6) + 1);
+      setCurrentValue(Math.floor(Math.random() * 6) + 1);
       rollCount++;
 
       if (rollCount >= 10) {
         clearInterval(rollInterval);
-        setCurrentNumber(Math.floor(Math.random() * 6) + 1);
+        const foundValue = Math.floor(Math.random() * 6) + 1;
+        setCurrentValue(foundValue);
+        onValueChange(index, foundValue);
         setIsRolling(false);
       }
     }, 100);
@@ -30,6 +38,7 @@ export default function Dice({ rollTrigger }) {
     return () => clearInterval(rollInterval);
   }, [rollTrigger]);
 
+  
   const getDotPositions = (number) => {
     const positions = {
       1: ["center"],
@@ -64,7 +73,7 @@ export default function Dice({ rollTrigger }) {
     >
       <div className="absolute inset-2 grid grid-cols-3 grid-rows-3 gap-1 place-items-center">
         {Array.from({ length: 9 }).map((_, index) => {
-          const shouldShow = getDotPositions(currentNumber).some(
+          const shouldShow = getDotPositions(currentValue).some(
             (pos) => positionMap[pos] === index
           );
 
