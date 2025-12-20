@@ -2,19 +2,16 @@
 
 import { useEffect, useState } from "react";
 
-export default function Dice({ id, isSelected, rollTrigger, onValueChange, onClick }) {
-  const [currentNumber, setCurrentNumber] = useState(1);
+export default function Dice({ index, initValue, initIsSelected, rollTrigger, resetTrigger, onValueChange }) {
+  const [currentValue, setCurrentValue] = useState(initValue);
   const [isRolling, setIsRolling] = useState(false);
+  const [isSelected, setIsSelected] = useState(initIsSelected);
 
-  /*useEffect(() => {
-    console.log("--------- (DICE " + id + ") clearSelectionTrigger received (" + clearSelectionTrigger + ") ---------");
 
-    if (rollTrigger === 0) { 
-      return;
-    }
-
-    setIsSelected(false);
-  }, [clearSelectionTrigger]);*/
+  useEffect(() => {
+    setCurrentValue(initValue);
+    setIsSelected(initIsSelected);
+  }, [resetTrigger, initValue, initIsSelected]);
 
   useEffect(() => {
     console.log("--------- (DICE " + id + ") rollTrigger received (" + rollTrigger + ") ---------");
@@ -30,13 +27,14 @@ export default function Dice({ id, isSelected, rollTrigger, onValueChange, onCli
       if (isSelected){
         return;
       } 
-      setCurrentNumber(Math.floor(Math.random() * 6) + 1);
+      setCurrentValue(Math.floor(Math.random() * 6) + 1);
       rollCount++;
 
       if (rollCount >= 10) {
         clearInterval(rollInterval);
-        setCurrentNumber(Math.floor(Math.random() * 6) + 1);
-        onValueChange(id, currentNumber);
+        const foundValue = Math.floor(Math.random() * 6) + 1;
+        setCurrentValue(foundValue);
+        onValueChange(index, foundValue);
         setIsRolling(false);
       }
     }, 100);
@@ -44,10 +42,7 @@ export default function Dice({ id, isSelected, rollTrigger, onValueChange, onCli
     return () => clearInterval(rollInterval);
   }, [rollTrigger]);
 
-  /* 
-  Dice Design  
-  */
-
+  
   const getDotPositions = (number) => {
     const positions = {
       1: ["center"],
@@ -82,7 +77,7 @@ export default function Dice({ id, isSelected, rollTrigger, onValueChange, onCli
     >
       <div className="absolute inset-2 grid grid-cols-3 grid-rows-3 gap-1 place-items-center">
         {Array.from({ length: 9 }).map((_, index) => {
-          const shouldShow = getDotPositions(currentNumber).some(
+          const shouldShow = getDotPositions(currentValue).some(
             (pos) => positionMap[pos] === index
           );
 
