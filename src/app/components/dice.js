@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 
-export default function Dice({ index, initValue, initIsSelected, rollTrigger, resetTrigger, onValueChange }) {
+export default function Dice({ index, id, initValue, initIsSelected, rollTrigger, resetTrigger, onValueChange, onDiceSelect }) {
   const [currentValue, setCurrentValue] = useState(initValue);
   const [isRolling, setIsRolling] = useState(false);
   const [isSelected, setIsSelected] = useState(initIsSelected);
@@ -14,7 +14,7 @@ export default function Dice({ index, initValue, initIsSelected, rollTrigger, re
   }, [resetTrigger, initValue, initIsSelected]);
 
   useEffect(() => {
-    console.log("--------- (DICE " + id + ") rollTrigger received (" + rollTrigger + ") ---------");
+    //console.log("--------- (DICE " + id + ") rollTrigger received (" + rollTrigger + ") ---------");
 
     if (rollTrigger === 0) {
       return;
@@ -65,6 +65,12 @@ export default function Dice({ index, initValue, initIsSelected, rollTrigger, re
     "bottom-right": 8,
   };
 
+  const onSelect = ()  => {
+    setIsSelected(!isSelected);
+    onDiceSelect(id);
+
+  }
+
   return (
     <div
       className={[
@@ -73,7 +79,7 @@ export default function Dice({ index, initValue, initIsSelected, rollTrigger, re
         isRolling ? "animate-[roll_800ms_ease-in-out_infinite]" : "hover:scale-105",
         isSelected ? "bg-gray-800" : "bg-white",
       ].join(" ")}
-      onClick={() => onClick(id)}
+      onClick={onSelect}
     >
       <div className="absolute inset-2 grid grid-cols-3 grid-rows-3 gap-1 place-items-center">
         {Array.from({ length: 9 }).map((_, index) => {

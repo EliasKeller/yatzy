@@ -45,10 +45,15 @@ export default function Home() {
       id: 2,
       name: "Player 2",
       score: 0
+    },
+    {
+      id: 3,
+      name: "Player 3",
+      score: 0
     }
   ];
 
-  const MAX_ROUNDS_PER_PLAYER = 3;
+  const MAX_ROUNDS_PER_PLAYER = 2;
   
   /* ----------------------------------------------------------- 
                                 STATES 
@@ -91,26 +96,43 @@ export default function Home() {
     console.log("Aktuelle Würfelwerte:", dices);
   };
 
+  const onDiceSelect = (idOfDiceWhichNeedsToBeSelected) => {
+    dices.forEach(dice => {
+      if (dice.id === idOfDiceWhichNeedsToBeSelected){
+        dice.isSelected = !dice.isSelected;
+      }
+    })
+
+    setDices(dices)
+  }
 
   /* ----------------------------------------------------------- 
                                 RENDER 
   -----------------------------------------------------------  */
 
-
   return (
-    <div className="h-screen flex flex-col items-center justify-center gap-8">
+    <div className="h-screen flex flex-col items-center justify-center gap-8 bg-gray-600">
       <h1 className="text-4xl font-bold">Yatzy</h1>
-      <h1 className="text-2xl font-semibold">Runde {currentRoundOfPlayer} - {players[currentPlayerIndex].name} ist am Zug</h1>
+      <h1 className="text-2xl font-semibold">{currentRoundOfPlayer === 0 ? "" : `${"Runde " + (currentRoundOfPlayer + 1) + " - "}`}{players[currentPlayerIndex].name} ist am Zug</h1>
       <div className="flex gap-4">
         {players.map((player, index) => (
-          <div key={player.id} className={["px-6 py-4 rounded-lg shadow-md", index === currentPlayerIndex ? "bg-blue-500 text-white" : "bg-gray-200"].join(" ")}>
+          <div key={player.id} className={["px-6 py-4 rounded-lg shadow-md", index === currentPlayerIndex ? "bg-emerald-800 text-white" : "bg-gray-800 text-white"].join(" ")}>
             <h2 className="text-2xl font-semibold">{player.name}</h2>
           </div>
         ))}
       </div>
       <div className="flex gap-4 flex-wrap justify-center">
         {dices.map((dice, index) => (
-          <Dice key={dice.id} index={index} initValue={dice.value} initIsSelected={dice.isSelected} rollTrigger={rollTrigger} resetTrigger={resetTrigger} onValueChange={updateDiceValue} />
+          <Dice key={dice.id} 
+          id={dice.id} 
+          index={index} 
+          initValue={dice.value} 
+          initIsSelected={dice.isSelected} 
+          rollTrigger={rollTrigger} 
+          resetTrigger={resetTrigger} 
+          onValueChange={updateDiceValue}
+          onDiceSelect={onDiceSelect}
+          />
         ))}
       </div>
         {
