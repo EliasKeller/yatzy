@@ -2,39 +2,12 @@
 
 import { useState } from "react";
 import Dice from "./components/dice";
+import { DEFAULT_DICES } from "@/utils/const";
 
 export default function Home() {
   /* ----------------------------------------------------------- 
                                 CONSTANTS 
   -----------------------------------------------------------  */
-  const defaultDices = [
-    {
-      id: 1,
-      value: 1,
-      isSelected: false
-    },
-    {
-      id: 2,
-      value: 1,
-      isSelected: false
-    },
-    {
-      id: 3,
-      value: 1,
-      isSelected: false
-    },
-    {
-      id: 4,
-      value: 1,
-      isSelected: false
-    },
-    {
-      id: 5,
-      value: 1,
-      isSelected: false
-    }
-  ]
-
   const defaultPlayers = [
     {
       id: 1,
@@ -58,7 +31,7 @@ export default function Home() {
   /* ----------------------------------------------------------- 
                                 STATES 
   -----------------------------------------------------------  */
-  const [dices, setDices] = useState(defaultDices);
+  const [dices, setDices] = useState(DEFAULT_DICES);
   const [rollTrigger, setRollTrigger] = useState(0);
   const [resetTrigger, setResetTrigger] = useState(0);
   const [players, setPlayers] = useState(defaultPlayers);
@@ -88,7 +61,7 @@ export default function Home() {
   const switchPlayer = () => {
       setCurrentRoundOfPlayer(0);
       setCurrentPlayerIndex((currentIndex) => (currentIndex + 1) % players.length);    
-      setDices(defaultDices);
+      setDices(DEFAULT_DICES);
       setResetTrigger((resetCount) => resetCount + 1);
   }
 
