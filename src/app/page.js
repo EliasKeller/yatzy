@@ -53,7 +53,7 @@ export default function Home() {
     }
   ];
 
-  const MAX_ROUNDS_PER_PLAYER = 2;
+  const MAX_ROUNDS_PER_PLAYER = 3;
   
   /* ----------------------------------------------------------- 
                                 STATES 
@@ -86,7 +86,7 @@ export default function Home() {
 };
 
   const switchPlayer = () => {
-      setCurrentRoundOfPlayer(1);
+      setCurrentRoundOfPlayer(0);
       setCurrentPlayerIndex((currentIndex) => (currentIndex + 1) % players.length);    
       setDices(defaultDices);
       setResetTrigger((resetCount) => resetCount + 1);
@@ -113,7 +113,7 @@ export default function Home() {
   return (
     <div className="h-screen flex flex-col items-center justify-center gap-8 bg-gray-600">
       <h1 className="text-4xl font-bold">Yatzy</h1>
-      <h1 className="text-2xl font-semibold">{currentRoundOfPlayer === 0 ? "" : `${"Runde " + (currentRoundOfPlayer + 1) + " - "}`}{players[currentPlayerIndex].name} ist am Zug</h1>
+      <h1 className="text-2xl font-semibold">{currentRoundOfPlayer === 0 ? "" : `${"Runde " + (currentRoundOfPlayer) + " - "}`}{players[currentPlayerIndex].name} ist am Zug</h1>
       <div className="flex gap-4">
         {players.map((player, index) => (
           <div key={player.id} className={["px-6 py-4 rounded-lg shadow-md", index === currentPlayerIndex ? "bg-emerald-800 text-white" : "bg-gray-800 text-white"].join(" ")}>
@@ -124,14 +124,15 @@ export default function Home() {
       <div className="flex gap-4 flex-wrap justify-center">
         {dices.map((dice, index) => (
           <Dice key={dice.id} 
-          id={dice.id} 
-          index={index} 
-          initValue={dice.value} 
-          initIsSelected={dice.isSelected} 
-          rollTrigger={rollTrigger} 
-          resetTrigger={resetTrigger} 
-          onValueChange={updateDiceValue}
-          onDiceSelect={onDiceSelect}
+            id={dice.id} 
+            index={index} 
+            initValue={dice.value} 
+            initIsSelected={dice.isSelected} 
+            rollTrigger={rollTrigger} 
+            resetTrigger={resetTrigger} 
+            onValueChange={updateDiceValue}
+            onDiceSelect={onDiceSelect}
+            isSelectionDisabled={currentRoundOfPlayer === 0}
           />
         ))}
       </div>
@@ -139,17 +140,25 @@ export default function Home() {
           currentRoundOfPlayer < MAX_ROUNDS_PER_PLAYER ? (
             <button
               onClick={rollAll}
-              className="px-8 py-3 text-lg font-semibold rounded-lg bg-gray-800 text-white hover:bg-gray-600"
+              className="px-8 py-3 text-lg font-semibold rounded-lg bg-gray-800 text-white hover:bg-gray-700"
             >
               WÜRFELN!
             </button>
           ) : (
-            <button
-              onClick={getAllDiceValues}
-              className="px-8 py-3 text-lg font-semibold rounded-lg bg-gray-800 text-white hover:bg-gray-600"
-            >
-              Score eintragen
-            </button>
+            <div className="space-x-2">
+              <button
+                onClick={getAllDiceValues}
+                className="px-8 py-3 text-lg font-semibold rounded-lg bg-gray-800 text-white hover:bg-gray-700"
+              >
+                Score eintragen
+              </button>
+              <button
+                onClick={switchPlayer}
+                className="px-8 py-3 text-lg font-semibold rounded-lg bg-gray-800 text-white hover:bg-gray-700"
+              >
+              Spieler wechseln
+              </button>
+            </div>
           )
         }
 

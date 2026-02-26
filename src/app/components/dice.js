@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 
-export default function Dice({ index, id, initValue, initIsSelected, rollTrigger, resetTrigger, onValueChange, onDiceSelect }) {
+export default function Dice({ index, id, initValue, initIsSelected, rollTrigger, resetTrigger, onValueChange, onDiceSelect, isSelectionDisabled }) {
   const [currentValue, setCurrentValue] = useState(initValue);
   const [isRolling, setIsRolling] = useState(false);
   const [isSelected, setIsSelected] = useState(initIsSelected);
@@ -66,6 +66,9 @@ export default function Dice({ index, id, initValue, initIsSelected, rollTrigger
   };
 
   const onSelect = ()  => {
+    if (isSelectionDisabled) {
+      return;
+    }
     setIsSelected(!isSelected);
     onDiceSelect(id);
 
