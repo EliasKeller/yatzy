@@ -3,6 +3,7 @@
 import { useState } from "react";
 import Dice from "./components/dice";
 import { DEFAULT_DICES } from "@/utils/const";
+import Scoreboard from "./components/scoreboard";
 
 export default function Home() {
   /* ----------------------------------------------------------- 
@@ -27,6 +28,16 @@ export default function Home() {
   ];
 
   const MAX_ROUNDS_PER_PLAYER = 3;
+
+  const exampleScore = [
+    {
+      playerId: 1,
+      score: {
+        type: "One",
+        score: 4
+      }
+    }
+  ]
   
   /* ----------------------------------------------------------- 
                                 STATES 
@@ -89,7 +100,7 @@ export default function Home() {
       <h1 className="text-2xl font-semibold">{currentRoundOfPlayer === 0 ? "" : `${"Runde " + (currentRoundOfPlayer) + " - "}`}{players[currentPlayerIndex].name} ist am Zug</h1>
       <div className="flex gap-4">
         {players.map((player, index) => (
-          <div key={player.id} className={["px-6 py-4 rounded-lg shadow-md", index === currentPlayerIndex ? "bg-emerald-800 text-white" : "bg-gray-800 text-white"].join(" ")}>
+          <div key={player.id} className={["px-6 py-4 rounded-lg shadow-md", index === currentPlayerIndex ? "bg-emerald-400 text-black" : "bg-gray-800 text-white"].join(" ")}>
             <h2 className="text-2xl font-semibold">{player.name}</h2>
           </div>
         ))}
@@ -135,6 +146,7 @@ export default function Home() {
           )
         }
 
+      <Scoreboard players={players} />
     </div>
   );
 }
