@@ -3,11 +3,35 @@
 import { useState } from "react";
 import { YATZY_COMBINATIONS } from "@/utils/const";
 
-export default function Scoreboard({ players, currentScore }) {
+export default function Scoreboard({ players, currentScore = [] }) {
   const [isOpen, setIsOpen] = useState(false);
 
   const upperSection = YATZY_COMBINATIONS.filter((c) => c.section === "upper");
   const lowerSection = YATZY_COMBINATIONS.filter((c) => c.section === "lower");
+
+const getScorForPlayerByType = (playerId, type) => {
+  const playerScore = currentScore.find((socre) => socre.playerId === playerId)
+  const scoreForType = playerScore.score.find(score => score.type === type).score
+  
+  if (scoreForType){
+    return scoreForType
+  } else if (scoreForType === null){
+    return "X"
+  }
+  return "-"
+}
+
+const getSumOfUpperSectionForPlayer = (playerId) => {
+  const playerScore = currentScore.find((socre) => socre.playerId === playerId).score
+  const playerScoreUpperSection = playerScore.filter(t => upperSection.map(s => s.type).includes(t.type)).map(s => s.score).filter(t => t)
+  const sum = playerScoreUpperSection.reduce(
+    (accumulator, currentValue) => accumulator + currentValue,
+    0,
+  );
+
+  return sum;
+}
+
 
   return (
     <>
@@ -75,7 +99,7 @@ export default function Scoreboard({ players, currentScore }) {
                           key={player.id}
                           className="py-2 px-3 text-center text-gray-500"
                         >
-                          -
+                          {getScorForPlayerByType(player.id, combo.type)}
                         </td>
                       ))}
                     </tr>
@@ -91,7 +115,7 @@ export default function Scoreboard({ players, currentScore }) {
                         key={player.id}
                         className="py-2 px-3 text-center font-semibold text-emerald-400"
                       >
-                        0
+                        {getSumOfUpperSectionForPlayer(player.id)}
                       </td>
                     ))}
                   </tr>
@@ -125,7 +149,7 @@ export default function Scoreboard({ players, currentScore }) {
                           key={player.id}
                           className="py-2 px-3 text-center text-gray-500"
                         >
-                          -
+                          {getScorForPlayerByType(player.id, combo.type)}
                         </td>
                       ))}
                     </tr>

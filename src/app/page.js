@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import Dice from "./components/dice";
-import { DEFAULT_DICES } from "@/utils/const";
+import { DEFAULT_DICES, YATZY_TYPES } from "@/utils/const";
 import Scoreboard from "./components/scoreboard";
 
 export default function Home() {
@@ -29,13 +29,204 @@ export default function Home() {
 
   const MAX_ROUNDS_PER_PLAYER = 3;
 
-  const exampleScore = [
+  const defaultScore = [
     {
       playerId: 1,
-      score: {
-        type: "One",
-        score: 4
-      }
+      score: [
+        {
+          type: YATZY_TYPES.ONE,
+          score: undefined
+        },
+        {
+          type: YATZY_TYPES.TWO,
+          score: 4
+        },
+        {
+          type: YATZY_TYPES.THREE,
+          score: 4
+        },
+        {
+          type: YATZY_TYPES.FOUR,
+          score: null
+        },
+        {
+          type: YATZY_TYPES.FIVE,
+          score: 4
+        },
+        {
+          type: YATZY_TYPES.SIX,
+          score: 4
+        },
+        {
+          type: YATZY_TYPES.ONE_PAIR,
+          score: 4
+        },
+        {
+          type: YATZY_TYPES.TWO_PAIRS,
+          score: 4
+        },
+        {
+          type: YATZY_TYPES.THREE_OF_A_KIND,
+          score: 4
+        },
+        {
+          type: YATZY_TYPES.FOUR_OF_A_KIND,
+          score: 4
+        },
+        {
+          type: YATZY_TYPES.SMALL_STREET,
+          score: 4
+        },
+        {
+          type: YATZY_TYPES.BIG_STREET,
+          score: 4
+        },
+        {
+          type: YATZY_TYPES.FULL_HOUSE,
+          score: 4
+        },
+        {
+          type: YATZY_TYPES.CHANCE,
+          score: 4
+        },
+        {
+          type: YATZY_TYPES.YATZY,
+          score: 4
+        }
+        
+      ]
+    },
+    {
+      playerId: 2,
+      score: [
+        {
+          type: YATZY_TYPES.ONE,
+          score: 5
+        },
+        {
+          type: YATZY_TYPES.TWO,
+          score: 5
+        },
+        {
+          type: YATZY_TYPES.THREE,
+          score: 5
+        },
+        {
+          type: YATZY_TYPES.FOUR,
+          score: 5
+        },
+        {
+          type: YATZY_TYPES.FIVE,
+          score: 5
+        },
+        {
+          type: YATZY_TYPES.SIX,
+          score: 5
+        },
+        {
+          type: YATZY_TYPES.ONE_PAIR,
+          score: 5
+        },
+        {
+          type: YATZY_TYPES.TWO_PAIRS,
+          score: 5
+        },
+        {
+          type: YATZY_TYPES.THREE_OF_A_KIND,
+          score: 5
+        },
+        {
+          type: YATZY_TYPES.FOUR_OF_A_KIND,
+          score: 5
+        },
+        {
+          type: YATZY_TYPES.SMALL_STREET,
+          score: 5
+        },
+        {
+          type: YATZY_TYPES.BIG_STREET,
+          score: 5
+        },
+        {
+          type: YATZY_TYPES.FULL_HOUSE,
+          score: 5
+        },
+        {
+          type: YATZY_TYPES.CHANCE,
+          score: 5
+        },
+        {
+          type: YATZY_TYPES.YATZY,
+          score: 5
+        }
+        
+      ]
+    },
+    {
+      playerId: 3,
+      score: [
+        {
+          type: YATZY_TYPES.ONE,
+          score: 1
+        },
+        {
+          type: YATZY_TYPES.TWO,
+          score: 2
+        },
+        {
+          type: YATZY_TYPES.THREE,
+          score: 3
+        },
+        {
+          type: YATZY_TYPES.FOUR,
+          score: 4
+        },
+        {
+          type: YATZY_TYPES.FIVE,
+          score: 5
+        },
+        {
+          type: YATZY_TYPES.SIX,
+          score: 6
+        },
+        {
+          type: YATZY_TYPES.ONE_PAIR,
+          score: 7
+        },
+        {
+          type: YATZY_TYPES.TWO_PAIRS,
+          score: 8
+        },
+        {
+          type: YATZY_TYPES.THREE_OF_A_KIND,
+          score: 9
+        },
+        {
+          type: YATZY_TYPES.FOUR_OF_A_KIND,
+          score: 10
+        },
+        {
+          type: YATZY_TYPES.SMALL_STREET,
+          score: 11
+        },
+        {
+          type: YATZY_TYPES.BIG_STREET,
+          score: 12
+        },
+        {
+          type: YATZY_TYPES.FULL_HOUSE,
+          score: 13
+        },
+        {
+          type: YATZY_TYPES.CHANCE,
+          score: 14
+        },
+        {
+          type: YATZY_TYPES.YATZY,
+          score: 15
+        }
+        
+      ]
     }
   ]
   
@@ -146,7 +337,7 @@ export default function Home() {
           )
         }
 
-      <Scoreboard players={players} />
+      <Scoreboard players={players} currentScore={defaultScore} />
     </div>
   );
 }

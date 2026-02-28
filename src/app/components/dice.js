@@ -14,8 +14,6 @@ export default function Dice({ index, id, initValue, initIsSelected, rollTrigger
   }, [resetTrigger, initValue, initIsSelected]);
 
   useEffect(() => {
-    //console.log("--------- (DICE " + id + ") rollTrigger received (" + rollTrigger + ") ---------");
-
     if (rollTrigger === 0) {
       return;
     }

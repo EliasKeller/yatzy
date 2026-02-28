@@ -1,19 +1,38 @@
+const YATZY_TYPES = {
+  ONE: "ONE",
+  TWO: "TWO",
+  THREE: "THREE",
+  FOUR: "FOUR",
+  FIVE: "FIVE",
+  SIX: "SIX",
+  ONE_PAIR: "ONE_PAIR",
+  TWO_PAIRS: "TWO_PAIRS",
+  THREE_OF_A_KIND: "THREE_OF_A_KIND",
+  FOUR_OF_A_KIND: "FOUR_OF_A_KIND",
+  SMALL_STREET: "SMALL_STREET",
+  BIG_STREET: "BIG_STREET",
+  FULL_HOUSE: "FULL_HOUSE",
+  CHANCE: "CHANCE",
+  YATZY: "YATZY",
+  
+}
+
 const YATZY_COMBINATIONS = [
-  { type: "ONE", label: "Aces", section: "upper" },
-  { type: "TWO", label: "Twos", section: "upper" },
-  { type: "THREE", label: "Threes", section: "upper" },
-  { type: "FOUR", label: "Fours", section: "upper" },
-  { type: "FIVE", label: "Fives", section: "upper" },
-  { type: "SIX", label: "Sixes", section: "upper" },
-  { type: "ONE_PAIR", label: "One pair", section: "lower" },
-  { type: "TWO_PAIRS", label: "Two pairs", section: "lower" },
-  { type: "THREE_OF_A_KIND", label: "Three of a kind", section: "lower" },
-  { type: "FOUR_OF_A_KIND", label: "Four of a kind", section: "lower" },
-  { type: "SMALL_STREET", label: "Small street", section: "lower" },
-  { type: "BIG_STREET", label: "Big street", section: "lower" },
-  { type: "FULL_HOUSE", label: "Full House", section: "lower" },
-  { type: "CHANCE", label: "Chance", section: "lower" },
-  { type: "YATZY", label: "YATZY", section: "lower" },
+  { type: YATZY_TYPES.ONE, label: "Aces", section: "upper" },
+  { type: YATZY_TYPES.TWO, label: "Twos", section: "upper" },
+  { type: YATZY_TYPES.THREE, label: "Threes", section: "upper" },
+  { type: YATZY_TYPES.FOUR, label: "Fours", section: "upper" },
+  { type: YATZY_TYPES.FIVE, label: "Fives", section: "upper" },
+  { type: YATZY_TYPES.SIX, label: "Sixes", section: "upper" },
+  { type: YATZY_TYPES.ONE_PAIR, label: "One pair", section: "lower" },
+  { type: YATZY_TYPES.TWO_PAIRS, label: "Two pairs", section: "lower" },
+  { type: YATZY_TYPES.THREE_OF_A_KIND, label: "Three of a kind", section: "lower" },
+  { type: YATZY_TYPES.FOUR_OF_A_KIND, label: "Four of a kind", section: "lower" },
+  { type: YATZY_TYPES.SMALL_STREET, label: "Small street", section: "lower" },
+  { type: YATZY_TYPES.BIG_STREET, label: "Big street", section: "lower" },
+  { type: YATZY_TYPES.FULL_HOUSE, label: "Full House", section: "lower" },
+  { type: YATZY_TYPES.CHANCE, label: "Chance", section: "lower" },
+  { type: YATZY_TYPES.YATZY, label: "YATZY", section: "lower" },
 ];
 
 
@@ -46,6 +65,7 @@ const DEFAULT_DICES = [
   ]
 
 export {
+    YATZY_TYPES,
     YATZY_COMBINATIONS,
     DEFAULT_DICES
 }
