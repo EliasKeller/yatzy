@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { YATZY_COMBINATIONS } from "@/utils/const";
+import { BONUS_MIN_NEEDED_POINTS, BONUS_REWARD, YATZY_COMBINATIONS } from "@/utils/const";
 
 export default function Scoreboard({ players, currentScore = [] }) {
   const [isOpen, setIsOpen] = useState(false);
@@ -32,6 +32,36 @@ const getSumOfUpperSectionForPlayer = (playerId) => {
   return sum;
 }
 
+const calculateBonus = (playerId) => {
+  const playerScore = currentScore.find((socre) => socre.playerId === playerId).score
+  const playerScoreUpperSection = playerScore.filter(t => upperSection.map(s => s.type).includes(t.type))
+  const isUpperSectionFullyFilledOut = !playerScoreUpperSection.some(score => score.score === undefined)
+
+  if (!isUpperSectionFullyFilledOut) {
+    return "-"
+  }
+
+  const sum = getSumOfUpperSectionForPlayer(playerId)
+
+  if (sum >= BONUS_MIN_NEEDED_POINTS) {
+    return BONUS_REWARD
+  }
+
+  return "X"
+}
+
+const getSumOfLowerSectionForPlayer = (playerId) => {
+  const sumUpperSection = getSumOfUpperSectionForPlayer(playerId)
+
+  const playerScore = currentScore.find((socre) => socre.playerId === playerId).score
+  const playerScoreLowerSection = playerScore.filter(t => lowerSection.map(s => s.type).includes(t.type)).map(s => s.score).filter(t => t)
+  const sumLowerSection = playerScoreLowerSection.reduce(
+    (accumulator, currentValue) => accumulator + currentValue,
+    0,
+  );
+
+  return sumUpperSection + sumLowerSection;
+}
 
   return (
     <>
@@ -123,14 +153,14 @@ const getSumOfUpperSectionForPlayer = (playerId) => {
                   {/* ---- Bonus ---- */}
                   <tr className="border-b border-gray-700/50 bg-emerald-900/20">
                     <td className="py-2 px-3 text-emerald-300 font-semibold">
-                      {"Bonus"}
+                      {"Bonus (≥ 63)"}
                     </td>
                     {players.map((player) => (
                       <td
                         key={player.id}
                         className="py-2 px-3 text-center font-semibold text-gray-500"
                       >
-                        -
+                        {calculateBonus(player.id)}
                       </td>
                     ))}
                   </tr>
@@ -165,7 +195,7 @@ const getSumOfUpperSectionForPlayer = (playerId) => {
                         key={player.id}
                         className="py-3 px-3 text-center font-bold text-emerald-300 text-base"
                       >
-                        0
+                        {getSumOfLowerSectionForPlayer(player.id)}
                       </td>
                     ))}
                   </tr>

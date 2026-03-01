@@ -35,6 +35,9 @@ const YATZY_COMBINATIONS = [
   { type: YATZY_TYPES.YATZY, label: "YATZY", section: "lower" },
 ];
 
+const BONUS_MIN_NEEDED_POINTS = 63;
+const BONUS_REWARD = 25;
+
 
 const DEFAULT_DICES = [
     {
@@ -67,5 +70,7 @@ const DEFAULT_DICES = [
 export {
     YATZY_TYPES,
     YATZY_COMBINATIONS,
+    BONUS_MIN_NEEDED_POINTS,
+    BONUS_REWARD,
     DEFAULT_DICES
 }

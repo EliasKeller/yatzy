@@ -35,7 +35,7 @@ export default function Home() {
       score: [
         {
           type: YATZY_TYPES.ONE,
-          score: undefined
+          score: 46
         },
         {
           type: YATZY_TYPES.TWO,
