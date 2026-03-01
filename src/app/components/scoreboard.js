@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { BONUS_MIN_NEEDED_POINTS, BONUS_REWARD, YATZY_COMBINATIONS } from "@/utils/const";
+import { AppsListDetail20Regular } from "@fluentui/react-icons";
 
 export default function Scoreboard({ players, currentScore = [] }) {
   const [isOpen, setIsOpen] = useState(false);
@@ -67,10 +68,21 @@ const getSumOfLowerSectionForPlayer = (playerId) => {
     <>
       {/* ---- Trigger Button ---- */}
       <button
-        onClick={() => setIsOpen(true)}
-        className="px-8 py-3 text-lg font-semibold rounded-lg bg-gray-800 text-white hover:bg-gray-700 cursor-pointer"
+        type="button"
+        onClick={() => setIsOpen(!isOpen)}
+        className="
+          fixed bottom-5 right-5 z-[60]
+          h-14 w-14 rounded-full
+          bg-gray-800 text-white
+          shadow-xl shadow-black/30
+          hover:bg-gray-700
+          active:scale-95
+          flex items-center justify-center
+          cursor-pointer
+        "
+        aria-label="Open scoreboard"
       >
-        Scoreboard
+        <AppsListDetail20Regular className="h-6 w-6" />
       </button>
 
       {/* ---- Modal Backdrop + Content ---- */}
