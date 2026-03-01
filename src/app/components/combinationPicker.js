@@ -34,7 +34,7 @@ function DiceIcon({ value, size = 28 }) {
   );
 }
 
-export default function CombinationPicker({ onSelect, isOpen = false }) {
+export default function CombinationPicker({ onSelect, isOpen = false, allowedCombinations = []}) {
   const upperSection = YATZY_COMBINATIONS.filter((c) => c.section === "upper");
   const lowerSection = YATZY_COMBINATIONS.filter((c) => c.section === "lower");
 
@@ -50,7 +50,6 @@ export default function CombinationPicker({ onSelect, isOpen = false }) {
     <>
       <div
         className="fixed inset-0 z-50 flex items-end md:items-center justify-center bg-black/60"
-        onClick={() => setIsOpen(false)}
       >
         <div
           className="relative w-full md:max-w-lg md:mx-4 max-h-[85vh] overflow-y-auto rounded-t-2xl md:rounded-xl bg-gray-800 border border-gray-700 text-white shadow-2xl"
@@ -66,13 +65,6 @@ export default function CombinationPicker({ onSelect, isOpen = false }) {
             <h2 className="text-xl font-bold text-emerald-400">
               Kombination w&auml;hlen
             </h2>
-            <button
-              onClick={() => setIsOpen(false)}
-              className="text-gray-400 hover:text-white text-2xl leading-none cursor-pointer p-1"
-              aria-label="Schliessen"
-            >
-              &times;
-            </button>
           </div>
 
           {/* ---- Oberer Bereich (Kachel-Grid) ---- */}

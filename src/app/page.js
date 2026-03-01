@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import Dice from "./components/dice";
-import { DEFAULT_DICES, YATZY_TYPES } from "@/utils/const";
+import { DEFAULT_DICES, YATZY_COMBINATIONS, YATZY_TYPES } from "@/utils/const";
 import Scoreboard from "./components/scoreboard";
 import CombinationPicker from "./components/combinationPicker";
 
@@ -240,7 +240,8 @@ export default function Home() {
   const [players, setPlayers] = useState(defaultPlayers);
   const [currentPlayerIndex, setCurrentPlayerIndex] = useState(0);
   const [currentRoundOfPlayer, setCurrentRoundOfPlayer] = useState(0);
-  const [isCombinationPickerOpen, setIsCombinationPickerOpen] = useState(false)
+  const [isCombinationPickerOpen, setIsCombinationPickerOpen] = useState(false);
+  const [allowedCombinations, setAllowedCombinations] = useState([]);
 
 
   /* ----------------------------------------------------------- 
@@ -286,6 +287,16 @@ export default function Home() {
 
   useEffect(() => {
     if (currentRoundOfPlayer >= MAX_ROUNDS_PER_PLAYER) {
+      const diceValues = dices.map(dice => dice.value);
+      const allowed = [];
+      YATZY_COMBINATIONS.forEach((combination) => {
+        if (combination.isValidCombination(diceValues)) {
+          allowed.push(combination);
+        }
+      })
+
+      console.log(allowed)
+
       setTimeout(() => {
         console.log("test test")
         setIsCombinationPickerOpen(true);
