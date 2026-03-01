@@ -1,9 +1,10 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Dice from "./components/dice";
 import { DEFAULT_DICES, YATZY_TYPES } from "@/utils/const";
 import Scoreboard from "./components/scoreboard";
+import CombinationPicker from "./components/combinationPicker";
 
 export default function Home() {
   /* ----------------------------------------------------------- 
@@ -93,7 +94,7 @@ export default function Home() {
           type: YATZY_TYPES.YATZY,
           score: 4
         }
-        
+
       ]
     },
     {
@@ -159,7 +160,7 @@ export default function Home() {
           type: YATZY_TYPES.YATZY,
           score: 5
         }
-        
+
       ]
     },
     {
@@ -225,11 +226,11 @@ export default function Home() {
           type: YATZY_TYPES.YATZY,
           score: 15
         }
-        
+
       ]
     }
   ]
-  
+
   /* ----------------------------------------------------------- 
                                 STATES 
   -----------------------------------------------------------  */
@@ -239,7 +240,8 @@ export default function Home() {
   const [players, setPlayers] = useState(defaultPlayers);
   const [currentPlayerIndex, setCurrentPlayerIndex] = useState(0);
   const [currentRoundOfPlayer, setCurrentRoundOfPlayer] = useState(0);
-   
+  const [isCombinationPickerOpen, setIsCombinationPickerOpen] = useState(false)
+
 
   /* ----------------------------------------------------------- 
                                 HELPERS 
@@ -252,7 +254,7 @@ export default function Home() {
     } else {
       switchPlayer();
     }
-    
+
   };
 
   const updateDiceValue = (index, value) => {
@@ -270,10 +272,6 @@ export default function Home() {
     setResetTrigger((resetCount) => resetCount + 1);
   }
 
-  const getAllDiceValues = () => {
-    console.log("Aktuelle Würfelwerte:", dices);
-  };
-
   const onDiceSelect = (id) => {
     setDices(prev =>
       prev.map(d =>
@@ -281,6 +279,19 @@ export default function Home() {
       )
     );
   };
+
+  /* ----------------------------------------------------------- 
+                              EFFECT 
+-----------------------------------------------------------  */
+
+  useEffect(() => {
+    if (currentRoundOfPlayer >= MAX_ROUNDS_PER_PLAYER) {
+      setTimeout(() => {
+        console.log("test test")
+        setIsCombinationPickerOpen(true);
+      }, 2500);
+    }
+  }, [currentRoundOfPlayer]);
 
   /* ----------------------------------------------------------- 
                                 RENDER 
@@ -299,45 +310,26 @@ export default function Home() {
       </div>
       <div className="flex gap-4 flex-wrap justify-center">
         {dices.map((dice, index) => (
-          <Dice key={dice.id} 
-            id={dice.id} 
-            index={index} 
-            initValue={dice.value} 
-            initIsSelected={dice.isSelected} 
-            rollTrigger={rollTrigger} 
-            resetTrigger={resetTrigger} 
+          <Dice key={dice.id}
+            id={dice.id}
+            index={index}
+            initValue={dice.value}
+            initIsSelected={dice.isSelected}
+            rollTrigger={rollTrigger}
+            resetTrigger={resetTrigger}
             onValueChange={updateDiceValue}
             onDiceSelect={onDiceSelect}
             isSelectionDisabled={currentRoundOfPlayer === 0}
           />
         ))}
       </div>
-        {
-          currentRoundOfPlayer < MAX_ROUNDS_PER_PLAYER ? (
-            <button
-              onClick={rollAll}
-              className="px-8 py-3 text-lg font-semibold rounded-lg bg-gray-800 text-white hover:bg-gray-700"
-            >
-              WÜRFELN!
-            </button>
-          ) : (
-            <div className="space-x-2">
-              <button
-                onClick={getAllDiceValues}
-                className="px-8 py-3 text-lg font-semibold rounded-lg bg-gray-800 text-white hover:bg-gray-700"
-              >
-                Score eintragen
-              </button>
-              <button
-                onClick={switchPlayer}
-                className="px-8 py-3 text-lg font-semibold rounded-lg bg-gray-800 text-white hover:bg-gray-700"
-              >
-              Spieler wechseln
-              </button>
-            </div>
-          )
-        }
-
+      <button
+        onClick={rollAll}
+        className={`px-8 py-3 text-lg font-semibold rounded-lg bg-gray-800 text-white hover:bg-gray-700 ${!(currentRoundOfPlayer < MAX_ROUNDS_PER_PLAYER) ? "invisible" : ""}`}
+      >
+        WÜRFELN!
+      </button>
+      <CombinationPicker onSelect={console.log} isOpen={isCombinationPickerOpen} />
       <Scoreboard players={players} currentScore={defaultScore} />
     </div>
   );
