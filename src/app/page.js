@@ -256,30 +256,31 @@ export default function Home() {
   };
 
   const updateDiceValue = (index, value) => {
-    dices[index].value = value;
-    setDices([...dices]);
-};
+    setDices(prev =>
+      prev.map((d, i) => (i === index ? { ...d, value } : d))
+    );
+  };
+
+  const cloneDices = (arr) => arr.map(d => ({ ...d }));
 
   const switchPlayer = () => {
-      setCurrentRoundOfPlayer(0);
-      setCurrentPlayerIndex((currentIndex) => (currentIndex + 1) % players.length);    
-      setDices(DEFAULT_DICES);
-      setResetTrigger((resetCount) => resetCount + 1);
+    setCurrentRoundOfPlayer(0);
+    setCurrentPlayerIndex((currentIndex) => (currentIndex + 1) % players.length);
+    setDices(cloneDices(DEFAULT_DICES));
+    setResetTrigger((resetCount) => resetCount + 1);
   }
 
   const getAllDiceValues = () => {
     console.log("Aktuelle Würfelwerte:", dices);
   };
 
-  const onDiceSelect = (idOfDiceWhichNeedsToBeSelected) => {
-    dices.forEach(dice => {
-      if (dice.id === idOfDiceWhichNeedsToBeSelected){
-        dice.isSelected = !dice.isSelected;
-      }
-    })
-
-    setDices(dices)
-  }
+  const onDiceSelect = (id) => {
+    setDices(prev =>
+      prev.map(d =>
+        d.id === id ? { ...d, isSelected: !d.isSelected } : d
+      )
+    );
+  };
 
   /* ----------------------------------------------------------- 
                                 RENDER 
