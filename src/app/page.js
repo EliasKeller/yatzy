@@ -287,22 +287,21 @@ export default function Home() {
 
   useEffect(() => {
     if (currentRoundOfPlayer >= MAX_ROUNDS_PER_PLAYER) {
-      const diceValues = dices.map(dice => dice.value);
-      const allowed = [];
-      YATZY_COMBINATIONS.forEach((combination) => {
-        if (combination.isValidCombination(diceValues)) {
-          allowed.push(combination);
-        }
-      })
-
-      console.log(allowed)
 
       setTimeout(() => {
         console.log("test test")
-        setIsCombinationPickerOpen(true);
-      }, 2500);
+        const diceValues = dices.map(dice => dice.value);
+        const allowed = [];
+        YATZY_COMBINATIONS.forEach((combination) => {
+          if (combination.isValidCombination(diceValues)) {
+            allowed.push(combination);
+          }
+        })
+      console.log(allowed)
+
+      }, 1000);
     }
-  }, [currentRoundOfPlayer]);
+  }, [dices]);
 
   /* ----------------------------------------------------------- 
                                 RENDER 
