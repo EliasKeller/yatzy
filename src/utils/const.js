@@ -1,3 +1,5 @@
+import { arraysEqual } from "./utils";
+
 const YATZY_TYPES = {
   ONE: "ONE",
   TWO: "TWO",
@@ -23,6 +25,8 @@ const YATZY_COMBINATIONS = [
     label: "Aces",
     section: "upper",
     isValidCombination(diceValues = []) {
+      if (diceValues.length !== 5) return false;
+
       return diceValues.includes(1)
     }
   },
@@ -31,6 +35,8 @@ const YATZY_COMBINATIONS = [
     label: "Twos",
     section: "upper",
     isValidCombination(diceValues = []) {
+      if (diceValues.length !== 5) return false;
+
       return diceValues.includes(2)
     }
   },
@@ -39,6 +45,8 @@ const YATZY_COMBINATIONS = [
     label: "Threes",
     section: "upper",
     isValidCombination(diceValues = []) {
+      if (diceValues.length !== 5) return false;
+
       return diceValues.includes(3)
     }
   },
@@ -47,6 +55,8 @@ const YATZY_COMBINATIONS = [
     label: "Fours",
     section: "upper",
     isValidCombination(diceValues = []) {
+      if (diceValues.length !== 5) return false;
+
       return diceValues.includes(4)
     }
   },
@@ -55,6 +65,8 @@ const YATZY_COMBINATIONS = [
     label: "Fives",
     section: "upper",
     isValidCombination(diceValues = []) {
+      if (diceValues.length !== 5) return false;
+
       return diceValues.includes(5)
     }
   },
@@ -63,6 +75,8 @@ const YATZY_COMBINATIONS = [
     label: "Sixes",
     section: "upper",
     isValidCombination(diceValues = []) {
+      if (diceValues.length !== 5) return false;
+
       return diceValues.includes(6)
     }
   },
@@ -71,7 +85,14 @@ const YATZY_COMBINATIONS = [
     label: "One pair",
     section: "lower",
     isValidCombination(diceValues = []) {
-      return false
+      if (diceValues.length !== 5) return false;
+
+      const counts = {};
+      for (const value of diceValues) {
+        counts[value] = (counts[value] || 0) + 1;
+      }
+
+      return Object.values(counts).some(c => c >= 2);
     }
   },
   {
@@ -79,7 +100,15 @@ const YATZY_COMBINATIONS = [
     label: "Two pairs",
     section: "lower",
     isValidCombination(diceValues = []) {
-      return false
+      if (diceValues.length !== 5) return false;
+
+      const counts = {};
+      for (const value of diceValues) {
+        counts[value] = (counts[value] || 0) + 1;
+      }
+
+      const pairsCount = Object.values(counts).filter(c => c >= 2).length;
+      return pairsCount >= 2;
     }
   },
   {
@@ -87,7 +116,14 @@ const YATZY_COMBINATIONS = [
     label: "Three of a kind",
     section: "lower",
     isValidCombination(diceValues = []) {
-      return false
+      if (diceValues.length !== 5) return false;
+
+      const counts = {};
+      for (const value of diceValues) {
+        counts[value] = (counts[value] || 0) + 1;
+      }
+
+      return Object.values(counts).some(c => c >= 3);
     }
   },
   {
@@ -95,7 +131,14 @@ const YATZY_COMBINATIONS = [
     label: "Four of a kind",
     section: "lower",
     isValidCombination(diceValues = []) {
-      return false
+      if (diceValues.length !== 5) return false;
+
+      const counts = {};
+      for (const value of diceValues) {
+        counts[value] = (counts[value] || 0) + 1;
+      }
+
+      return Object.values(counts).some(c => c >= 4);
     }
   },
   {
@@ -103,7 +146,9 @@ const YATZY_COMBINATIONS = [
     label: "Small street",
     section: "lower",
     isValidCombination(diceValues = []) {
-      return diceValues.includes(1, 2, 3, 4, 5)
+      if (diceValues.length !== 5) return false;
+
+      return arraysEqual(diceValues.sort(), [1, 2, 3, 4, 5])
     }
   },
   {
@@ -111,7 +156,9 @@ const YATZY_COMBINATIONS = [
     label: "Big street",
     section: "lower",
     isValidCombination(diceValues = []) {
-      return diceValues.includes(2, 3, 4, 5, 6)
+      if (diceValues.length !== 5) return false;
+
+      return arraysEqual(diceValues.sort(), [2, 3, 4, 5, 6])
     }
   },
   {
@@ -119,7 +166,14 @@ const YATZY_COMBINATIONS = [
     label: "Full House",
     section: "lower",
     isValidCombination(diceValues = []) {
-      return false
+      if (diceValues.length !== 5) return false;
+
+      const counts = {};
+      for (const value of diceValues) {
+        counts[value] = (counts[value] || 0) + 1;
+      }
+      const countValues = Object.values(counts);
+      return countValues.includes(3) && countValues.includes(2);
     }
   },
   {
@@ -127,7 +181,9 @@ const YATZY_COMBINATIONS = [
     label: "Chance",
     section: "lower",
     isValidCombination(diceValues = []) {
-      return true
+      if (diceValues.length !== 5) return false;
+
+      return true;
     }
   },
   {
@@ -135,7 +191,13 @@ const YATZY_COMBINATIONS = [
     label: "YATZY",
     section: "lower",
     isValidCombination(diceValues = []) {
-      return false
+      if (diceValues.length !== 5) return false;
+
+      const firstValue = diceValues[0];
+      if (diceValues.find(value => value !== firstValue)) {
+        return false;
+      }
+      return true;
     }
   },
 ];

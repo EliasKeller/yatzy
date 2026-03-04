@@ -297,7 +297,7 @@ export default function Home() {
             allowed.push(combination);
           }
         })
-      console.log(allowed)
+        console.log(allowed)
 
       }, 1000);
     }
