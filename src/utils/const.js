@@ -71,7 +71,7 @@ const YATZY_COMBINATIONS = [
     label: "One pair",
     section: "lower",
     isValidCombination(diceValues = []) {
-      return diceValues.includes(1)
+      return false
     }
   },
   {
@@ -79,7 +79,7 @@ const YATZY_COMBINATIONS = [
     label: "Two pairs",
     section: "lower",
     isValidCombination(diceValues = []) {
-      return diceValues.includes(1)
+      return false
     }
   },
   {
@@ -87,7 +87,7 @@ const YATZY_COMBINATIONS = [
     label: "Three of a kind",
     section: "lower",
     isValidCombination(diceValues = []) {
-      return diceValues.includes(1)
+      return false
     }
   },
   {
@@ -95,7 +95,7 @@ const YATZY_COMBINATIONS = [
     label: "Four of a kind",
     section: "lower",
     isValidCombination(diceValues = []) {
-      return diceValues.includes(1)
+      return false
     }
   },
   {
@@ -119,7 +119,7 @@ const YATZY_COMBINATIONS = [
     label: "Full House",
     section: "lower",
     isValidCombination(diceValues = []) {
-      return diceValues.includes(1)
+      return false
     }
   },
   {
@@ -135,7 +135,7 @@ const YATZY_COMBINATIONS = [
     label: "YATZY",
     section: "lower",
     isValidCombination(diceValues = []) {
-      return diceValues.includes(1)
+      return false
     }
   },
 ];
