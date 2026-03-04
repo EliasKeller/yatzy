@@ -5,6 +5,7 @@ import Dice from "./components/dice";
 import { DEFAULT_DICES, YATZY_COMBINATIONS, YATZY_TYPES } from "@/utils/const";
 import Scoreboard from "./components/scoreboard";
 import CombinationPicker from "./components/combinationPicker";
+import { isCombinationAvailableForPlayer } from "@/utils/utils";
 
 export default function Home() {
   /* ----------------------------------------------------------- 
@@ -36,63 +37,63 @@ export default function Home() {
       score: [
         {
           type: YATZY_TYPES.ONE,
-          score: 46
+          score: undefined
         },
         {
           type: YATZY_TYPES.TWO,
-          score: 4
+          score: undefined
         },
         {
           type: YATZY_TYPES.THREE,
-          score: 4
+          score: undefined
         },
         {
           type: YATZY_TYPES.FOUR,
-          score: null
+          score: undefined
         },
         {
           type: YATZY_TYPES.FIVE,
-          score: 4
+          score: undefined
         },
         {
           type: YATZY_TYPES.SIX,
-          score: 4
+          score: undefined
         },
         {
           type: YATZY_TYPES.ONE_PAIR,
-          score: 4
+          score: undefined
         },
         {
           type: YATZY_TYPES.TWO_PAIRS,
-          score: 4
+          score: undefined
         },
         {
           type: YATZY_TYPES.THREE_OF_A_KIND,
-          score: 4
+          score: undefined
         },
         {
           type: YATZY_TYPES.FOUR_OF_A_KIND,
-          score: 4
+          score: undefined
         },
         {
           type: YATZY_TYPES.SMALL_STREET,
-          score: 4
+          score: undefined
         },
         {
           type: YATZY_TYPES.BIG_STREET,
-          score: 4
+          score: undefined
         },
         {
           type: YATZY_TYPES.FULL_HOUSE,
-          score: 4
+          score: undefined
         },
         {
           type: YATZY_TYPES.CHANCE,
-          score: 4
+          score: undefined
         },
         {
           type: YATZY_TYPES.YATZY,
-          score: 4
+          score: undefined
         }
 
       ]
@@ -293,11 +294,14 @@ export default function Home() {
         const diceValues = dices.map(dice => dice.value);
         const allowed = [];
         YATZY_COMBINATIONS.forEach((combination) => {
-          if (combination.isValidCombination(diceValues)) {
+          if (combination.isValidCombination(diceValues) && isCombinationAvailableForPlayer(players[currentPlayerIndex].id, combination.type, defaultScore)) {
             allowed.push(combination);
+
           }
         })
         console.log(allowed)
+        setAllowedCombinations(allowed);
+        setIsCombinationPickerOpen(true);
 
       }, 1000);
     }
@@ -339,7 +343,7 @@ export default function Home() {
       >
         WÜRFELN!
       </button>
-      <CombinationPicker onSelect={console.log} isOpen={isCombinationPickerOpen} />
+      <CombinationPicker onSelect={console.log} isOpen={isCombinationPickerOpen} allowedCombinations={allowedCombinations} />
       <Scoreboard players={players} currentScore={defaultScore} />
     </div>
   );

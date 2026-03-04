@@ -34,9 +34,9 @@ function DiceIcon({ value, size = 28 }) {
   );
 }
 
-export default function CombinationPicker({ onSelect, isOpen = false, allowedCombinations = []}) {
-  const upperSection = YATZY_COMBINATIONS.filter((c) => c.section === "upper");
-  const lowerSection = YATZY_COMBINATIONS.filter((c) => c.section === "lower");
+export default function CombinationPicker({ onSelect, isOpen = false, allowedCombinations = [] }) {
+  const upperSection = YATZY_COMBINATIONS.filter((combination) => combination.section === "upper" && allowedCombinations.some(allowed => allowed.type === combination.type));
+  const lowerSection = YATZY_COMBINATIONS.filter((combination) => combination.section === "lower" && allowedCombinations.some(allowed => allowed.type === combination.type));
 
   const handleSelect = (combo) => {
     if (onSelect) {
@@ -68,45 +68,49 @@ export default function CombinationPicker({ onSelect, isOpen = false, allowedCom
           </div>
 
           {/* ---- Oberer Bereich (Kachel-Grid) ---- */}
-          <div className="px-4 pb-2">
-            <p className="pb-2 px-1 text-xs font-bold uppercase tracking-wider text-emerald-500">
-              Oberer Bereich
-            </p>
-            <div className="grid grid-cols-3 gap-2">
-              {upperSection.map((combo) => (
-                <button
-                  key={combo.key}
-                  onClick={() => handleSelect(combo)}
-                  className="flex flex-col items-center justify-center gap-1.5 p-3 rounded-xl bg-gray-700/50 border border-gray-600/50 active:scale-95 active:bg-emerald-900/50 hover:bg-emerald-900/40 hover:border-emerald-700/50 transition-all cursor-pointer"
-                >
-                  <DiceIcon value={DICE_DOTS[combo.type]} size={32} />
-                  <span className="text-xs font-semibold text-gray-300">
-                    {combo.label}
-                  </span>
-                </button>
-              ))}
+          {upperSection.length > 0 && (
+            <div className="px-4 pb-2">
+              <p className="pb-2 px-1 text-xs font-bold uppercase tracking-wider text-emerald-500">
+                Oberer Bereich
+              </p>
+              <div className="flex flex-col gap-2">
+                {upperSection.map((combo) => (
+                  <button
+                    key={combo.key}
+                    onClick={() => handleSelect(combo)}
+                    className="flex flex-col items-center justify-center gap-1.5 p-2 rounded-xl bg-gray-700/50 border border-gray-600/50 active:scale-95 active:bg-emerald-900/50 hover:bg-emerald-900/40 hover:border-emerald-700/50 transition-all cursor-pointer"
+                  >
+                    <DiceIcon value={DICE_DOTS[combo.type]} size={32} />
+                    <span className="text-xs font-semibold text-gray-300">
+                      {combo.label}
+                    </span>
+                  </button>
+                ))}
+              </div>
             </div>
-          </div>
+          )}
 
           {/* ---- Unterer Bereich (Kachel-Grid) ---- */}
-          <div className="px-4 pt-2 pb-5">
-            <p className="pb-2 px-1 text-xs font-bold uppercase tracking-wider text-emerald-500">
-              Unterer Bereich
-            </p>
-            <div className="grid grid-cols-2 gap-2">
-              {lowerSection.map((combo) => (
-                <button
-                  key={combo.key}
-                  onClick={() => handleSelect(combo)}
-                  className="flex items-center gap-3 p-3.5 rounded-xl bg-gray-700/50 border border-gray-600/50 active:scale-95 active:bg-emerald-900/50 hover:bg-emerald-900/40 hover:border-emerald-700/50 transition-all cursor-pointer"
-                >
-                  <span className="text-sm font-semibold text-gray-300">
-                    {combo.label}
-                  </span>
-                </button>
-              ))}
+          {lowerSection.length > 0 && (
+            <div className="px-4 pt-2 pb-5">
+              <p className="pb-2 px-1 text-xs font-bold uppercase tracking-wider text-emerald-500">
+                Unterer Bereich
+              </p>
+              <div className="flex flex-col gap-2">
+                {lowerSection.map((combo) => (
+                  <button
+                    key={combo.key}
+                    onClick={() => handleSelect(combo)}
+                    className="flex items-center gap-3 p-3.5 rounded-xl bg-gray-700/50 border border-gray-600/50 active:scale-95 active:bg-emerald-900/50 hover:bg-emerald-900/40 hover:border-emerald-700/50 transition-all cursor-pointer"
+                  >
+                    <span className="text-sm font-semibold text-gray-300">
+                      {combo.label}
+                    </span>
+                  </button>
+                ))}
+              </div>
             </div>
-          </div>
+          )}
         </div>
       </div>
     </>
