@@ -87,14 +87,14 @@ const getSumOfLowerSectionForPlayer = (playerId) => {
 
       {/* ---- Modal Backdrop + Content ---- */}
       {isOpen && (
+
+      <div
+        className="fixed inset-0 z-50 flex items-end md:items-center justify-center bg-black/60"
+      >
         <div
-          className="fixed inset-0 z-50 flex items-center justify-center bg-gray-600"
-          onClick={() => setIsOpen(false)}
-        >
-          <div
-            className="relative max-w-3xl w-full mx-4 max-h-[90vh] overflow-y-auto rounded-xl bg-gray-800 border border-gray-700 text-white shadow-2xl"
-            onClick={(e) => e.stopPropagation()}
-          >
+          className="relative w-full md:max-w-lg md:mx-4 max-h-[85vh] overflow-y-auto rounded-t-2xl md:rounded-xl bg-gray-800 border border-gray-700 text-white shadow-2xl"
+          onClick={(e) => e.stopPropagation()}
+        >    
             {/* ---- Header ---- */}
             <div className="flex items-center justify-between px-6 pt-6 pb-2">
               <h2 className="text-2xl font-bold text-emerald-400">

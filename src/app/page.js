@@ -85,7 +85,7 @@ export default function Home() {
 
   const onCombinationSelect = (selectedCombination) => {
     setIsCombinationPickerOpen(false);
-    
+
     const playerScore = score.find((score) => score.playerId === players[currentPlayerIndex].id);
     playerScore.score = playerScore.score.map(combination => {
       if (combination.type === selectedCombination.type) {
@@ -130,8 +130,8 @@ export default function Home() {
 
   return (
     <div className="h-screen flex flex-col items-center justify-center gap-8 bg-gray-600">
-      <h1 className="text-4xl font-bold">Yatzy</h1>
-      <h1 className="text-2xl font-semibold">{currentRoundOfPlayer === 0 ? "" : `${"Runde " + (currentRoundOfPlayer) + " - "}`}{players[currentPlayerIndex].name} ist am Zug</h1>
+      <h1 className="text-4xl font-bold text-white">Yatzy</h1>
+      <h1 className="text-2xl font-semibold text-white">{currentRoundOfPlayer === 0 ? "" : `${"Runde " + (currentRoundOfPlayer) + " - "}`}{players[currentPlayerIndex].name} ist am Zug</h1>
       <div className="flex gap-4">
         {players.map((player, index) => (
           <div key={player.id} className={["px-6 py-4 rounded-lg shadow-md", index === currentPlayerIndex ? "bg-emerald-400 text-black" : "bg-gray-800 text-white"].join(" ")}>
