@@ -73,9 +73,9 @@ const getSumOfLowerSectionForPlayer = (playerId) => {
         className="
           fixed bottom-5 right-5 z-[60]
           h-14 w-14 rounded-full
-          bg-gray-800 text-white
+          bg-emerald-500 text-white
           shadow-xl shadow-black/30
-          hover:bg-gray-700
+          hover:bg-emerald-600
           active:scale-95
           flex items-center justify-center
           cursor-pointer
