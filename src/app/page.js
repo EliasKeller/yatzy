@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import Dice from "./components/dice";
-import { DEFAULT_DICES, YATZY_COMBINATIONS, YATZY_TYPES } from "@/utils/const";
+import { DEFAULT_DICES, DEFAULT_SCORE, YATZY_COMBINATIONS, YATZY_TYPES } from "@/utils/const";
 import Scoreboard from "./components/scoreboard";
 import CombinationPicker from "./components/combinationPicker";
 import { isCombinationAvailableForPlayer } from "@/utils/utils";
@@ -31,206 +31,6 @@ export default function Home() {
 
   const MAX_ROUNDS_PER_PLAYER = 3;
 
-  const defaultScore = [
-    {
-      playerId: 1,
-      score: [
-        {
-          type: YATZY_TYPES.ONE,
-          score: undefined
-        },
-        {
-          type: YATZY_TYPES.TWO,
-          score: undefined
-        },
-        {
-          type: YATZY_TYPES.THREE,
-          score: undefined
-        },
-        {
-          type: YATZY_TYPES.FOUR,
-          score: undefined
-        },
-        {
-          type: YATZY_TYPES.FIVE,
-          score: undefined
-        },
-        {
-          type: YATZY_TYPES.SIX,
-          score: undefined
-        },
-        {
-          type: YATZY_TYPES.ONE_PAIR,
-          score: 1
-        },
-        {
-          type: YATZY_TYPES.TWO_PAIRS,
-          score: 2
-        },
-        {
-          type: YATZY_TYPES.THREE_OF_A_KIND,
-          score: 3
-        },
-        {
-          type: YATZY_TYPES.FOUR_OF_A_KIND,
-          score: 4
-        },
-        {
-          type: YATZY_TYPES.SMALL_STREET,
-          score: 5
-        },
-        {
-          type: YATZY_TYPES.BIG_STREET,
-          score: 6
-        },
-        {
-          type: YATZY_TYPES.FULL_HOUSE,
-          score: 7
-        },
-        {
-          type: YATZY_TYPES.CHANCE,
-          score: 8
-        },
-        {
-          type: YATZY_TYPES.YATZY,
-          score: 9
-        }
-
-      ]
-    },
-    {
-      playerId: 2,
-      score: [
-        {
-          type: YATZY_TYPES.ONE,
-          score: 5
-        },
-        {
-          type: YATZY_TYPES.TWO,
-          score: 5
-        },
-        {
-          type: YATZY_TYPES.THREE,
-          score: 5
-        },
-        {
-          type: YATZY_TYPES.FOUR,
-          score: 5
-        },
-        {
-          type: YATZY_TYPES.FIVE,
-          score: 5
-        },
-        {
-          type: YATZY_TYPES.SIX,
-          score: 5
-        },
-        {
-          type: YATZY_TYPES.ONE_PAIR,
-          score: 5
-        },
-        {
-          type: YATZY_TYPES.TWO_PAIRS,
-          score: 5
-        },
-        {
-          type: YATZY_TYPES.THREE_OF_A_KIND,
-          score: 5
-        },
-        {
-          type: YATZY_TYPES.FOUR_OF_A_KIND,
-          score: 5
-        },
-        {
-          type: YATZY_TYPES.SMALL_STREET,
-          score: 5
-        },
-        {
-          type: YATZY_TYPES.BIG_STREET,
-          score: 5
-        },
-        {
-          type: YATZY_TYPES.FULL_HOUSE,
-          score: 5
-        },
-        {
-          type: YATZY_TYPES.CHANCE,
-          score: 5
-        },
-        {
-          type: YATZY_TYPES.YATZY,
-          score: 5
-        }
-
-      ]
-    },
-    {
-      playerId: 3,
-      score: [
-        {
-          type: YATZY_TYPES.ONE,
-          score: 1
-        },
-        {
-          type: YATZY_TYPES.TWO,
-          score: 2
-        },
-        {
-          type: YATZY_TYPES.THREE,
-          score: 3
-        },
-        {
-          type: YATZY_TYPES.FOUR,
-          score: 4
-        },
-        {
-          type: YATZY_TYPES.FIVE,
-          score: 5
-        },
-        {
-          type: YATZY_TYPES.SIX,
-          score: 6
-        },
-        {
-          type: YATZY_TYPES.ONE_PAIR,
-          score: 7
-        },
-        {
-          type: YATZY_TYPES.TWO_PAIRS,
-          score: 8
-        },
-        {
-          type: YATZY_TYPES.THREE_OF_A_KIND,
-          score: 9
-        },
-        {
-          type: YATZY_TYPES.FOUR_OF_A_KIND,
-          score: 10
-        },
-        {
-          type: YATZY_TYPES.SMALL_STREET,
-          score: 11
-        },
-        {
-          type: YATZY_TYPES.BIG_STREET,
-          score: 12
-        },
-        {
-          type: YATZY_TYPES.FULL_HOUSE,
-          score: 13
-        },
-        {
-          type: YATZY_TYPES.CHANCE,
-          score: 14
-        },
-        {
-          type: YATZY_TYPES.YATZY,
-          score: 15
-        }
-
-      ]
-    }
-  ]
 
   /* ----------------------------------------------------------- 
                                 STATES 
@@ -239,6 +39,7 @@ export default function Home() {
   const [rollTrigger, setRollTrigger] = useState(0);
   const [resetTrigger, setResetTrigger] = useState(0);
   const [players, setPlayers] = useState(defaultPlayers);
+  const [score, setScore] = useState(DEFAULT_SCORE);
   const [currentPlayerIndex, setCurrentPlayerIndex] = useState(0);
   const [currentRoundOfPlayer, setCurrentRoundOfPlayer] = useState(0);
   const [isCombinationPickerOpen, setIsCombinationPickerOpen] = useState(false);
@@ -282,16 +83,19 @@ export default function Home() {
     );
   };
 
-  const onCombinationSelect = (combination) => {
-    console.log("Selected combination:", combination);
-  
-    
-    // Hier kannst du die Logik implementieren, um die Punkte basierend auf der ausgewählten Kombination zu berechnen und den Spielerstand zu aktualisieren.
+  const onCombinationSelect = (selectedCombination) => {
     setIsCombinationPickerOpen(false);
-    console.log(YATZY_COMBINATIONS);
+    
+    const playerScore = score.find((score) => score.playerId === players[currentPlayerIndex].id);
+    playerScore.score = playerScore.score.map(combination => {
+      if (combination.type === selectedCombination.type) {
+        return { ...combination, score: selectedCombination.calculateScore(dices.map(dice => dice.value)) };
+      } else {
+        return { ...combination };
+        }
+      });
 
-
-
+    setScore(prev => prev.map(score => score.playerId === playerScore.playerId ? playerScore : score));
     switchPlayer();
   }
 
@@ -307,7 +111,7 @@ export default function Home() {
         const diceValues = dices.map(dice => dice.value);
         const allowed = [];
         YATZY_COMBINATIONS.forEach((combination) => {
-          if (combination.isValidCombination(diceValues) && isCombinationAvailableForPlayer(players[currentPlayerIndex].id, combination.type, defaultScore)) {
+          if (combination.isValidCombination(diceValues) && isCombinationAvailableForPlayer(players[currentPlayerIndex].id, combination.type, score)) {
             allowed.push(combination);
 
           }
@@ -357,7 +161,7 @@ export default function Home() {
         WÜRFELN!
       </button>
       <CombinationPicker onSelect={onCombinationSelect} isOpen={isCombinationPickerOpen} allowedCombinations={allowedCombinations} />
-      <Scoreboard players={players} currentScore={defaultScore} />
+      <Scoreboard players={players} currentScore={score} />
     </div>
   );
 }

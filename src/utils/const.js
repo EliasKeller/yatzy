@@ -117,7 +117,7 @@ const YATZY_COMBINATIONS = [
       for (const value of diceValues) {
         counts[value] = (counts[value] || 0) + 1;
       }
-      
+
       const pairs = Object.entries(counts).filter(([value, count]) => count >= 2);
       return Math.max(...pairs.map(([value, count]) => parseInt(value))) * 2;
     }
@@ -142,7 +142,7 @@ const YATZY_COMBINATIONS = [
       for (const value of diceValues) {
         counts[value] = (counts[value] || 0) + 1;
       }
-      
+
       const pairs = Object.entries(counts).filter(([value, count]) => count >= 2);
       const topTwoPairs = pairs
         .map(([value, count]) => parseInt(value))
@@ -170,7 +170,7 @@ const YATZY_COMBINATIONS = [
       for (const value of diceValues) {
         counts[value] = (counts[value] || 0) + 1;
       }
-      
+
       const threeOfKind = Object.entries(counts).find(([value, count]) => count >= 3);
       return threeOfKind[0] * 3;
     }
@@ -190,11 +190,11 @@ const YATZY_COMBINATIONS = [
       return Object.values(counts).some(c => c >= 4);
     },
     calculateScore(diceValues = []) {
-     const counts = {};
+      const counts = {};
       for (const value of diceValues) {
         counts[value] = (counts[value] || 0) + 1;
       }
-      
+
       const fourOfKind = Object.entries(counts).find(([value, count]) => count >= 4);
       return fourOfKind[0] * 4;
     }
@@ -240,7 +240,7 @@ const YATZY_COMBINATIONS = [
       return countValues.includes(3) && countValues.includes(2);
     },
     calculateScore(diceValues = []) {
-        return diceValues.reduce((sum, value) => sum + value, 0);
+      return diceValues.reduce((sum, value) => sum + value, 0);
     }
   },
   {
@@ -307,10 +307,212 @@ const DEFAULT_DICES = [
   }
 ]
 
+const DEFAULT_SCORE = [
+  {
+    playerId: 1,
+    score: [
+      {
+        type: YATZY_TYPES.ONE,
+        score: undefined
+      },
+      {
+        type: YATZY_TYPES.TWO,
+        score: undefined
+      },
+      {
+        type: YATZY_TYPES.THREE,
+        score: undefined
+      },
+      {
+        type: YATZY_TYPES.FOUR,
+        score: undefined
+      },
+      {
+        type: YATZY_TYPES.FIVE,
+        score: undefined
+      },
+      {
+        type: YATZY_TYPES.SIX,
+        score: undefined
+      },
+      {
+        type: YATZY_TYPES.ONE_PAIR,
+        score: undefined
+      },
+      {
+        type: YATZY_TYPES.TWO_PAIRS,
+        score: undefined
+      },
+      {
+        type: YATZY_TYPES.THREE_OF_A_KIND,
+        score: undefined
+      },
+      {
+        type: YATZY_TYPES.FOUR_OF_A_KIND,
+        score: undefined
+      },
+      {
+        type: YATZY_TYPES.SMALL_STREET,
+        score: undefined
+      },
+      {
+        type: YATZY_TYPES.BIG_STREET,
+        score: undefined
+      },
+      {
+        type: YATZY_TYPES.FULL_HOUSE,
+        score: undefined
+      },
+      {
+        type: YATZY_TYPES.CHANCE,
+        score: undefined
+      },
+      {
+        type: YATZY_TYPES.YATZY,
+        score: undefined
+      }
+
+    ]
+  },
+  {
+    playerId: 2,
+    score: [
+      {
+        type: YATZY_TYPES.ONE,
+        score: undefined
+      },
+      {
+        type: YATZY_TYPES.TWO,
+        score: undefined
+      },
+      {
+        type: YATZY_TYPES.THREE,
+        score: undefined
+      },
+      {
+        type: YATZY_TYPES.FOUR,
+        score: undefined
+      },
+      {
+        type: YATZY_TYPES.FIVE,
+        score: undefined
+      },
+      {
+        type: YATZY_TYPES.SIX,
+        score: undefined
+      },
+      {
+        type: YATZY_TYPES.ONE_PAIR,
+        score: undefined
+      },
+      {
+        type: YATZY_TYPES.TWO_PAIRS,
+        score: undefined
+      },
+      {
+        type: YATZY_TYPES.THREE_OF_A_KIND,
+        score: undefined
+      },
+      {
+        type: YATZY_TYPES.FOUR_OF_A_KIND,
+        score: undefined
+      },
+      {
+        type: YATZY_TYPES.SMALL_STREET,
+        score: undefined
+      },
+      {
+        type: YATZY_TYPES.BIG_STREET,
+        score: undefined
+      },
+      {
+        type: YATZY_TYPES.FULL_HOUSE,
+        score: undefined
+      },
+      {
+        type: YATZY_TYPES.CHANCE,
+        score: undefined
+      },
+      {
+        type: YATZY_TYPES.YATZY,
+        score: undefined
+      }
+
+    ]
+  },
+  {
+    playerId: 3,
+    score: [
+      {
+        type: YATZY_TYPES.ONE,
+        score: undefined
+      },
+      {
+        type: YATZY_TYPES.TWO,
+        score: undefined
+      },
+      {
+        type: YATZY_TYPES.THREE,
+        score: undefined
+      },
+      {
+        type: YATZY_TYPES.FOUR,
+        score: undefined
+      },
+      {
+        type: YATZY_TYPES.FIVE,
+        score: undefined
+      },
+      {
+        type: YATZY_TYPES.SIX,
+        score: undefined
+      },
+      {
+        type: YATZY_TYPES.ONE_PAIR,
+        score: undefined
+      },
+      {
+        type: YATZY_TYPES.TWO_PAIRS,
+        score: undefined
+      },
+      {
+        type: YATZY_TYPES.THREE_OF_A_KIND,
+        score: undefined
+      },
+      {
+        type: YATZY_TYPES.FOUR_OF_A_KIND,
+        score: undefined
+      },
+      {
+        type: YATZY_TYPES.SMALL_STREET,
+        score: undefined
+      },
+      {
+        type: YATZY_TYPES.BIG_STREET,
+        score: undefined
+      },
+      {
+        type: YATZY_TYPES.FULL_HOUSE,
+        score: undefined
+      },
+      {
+        type: YATZY_TYPES.CHANCE,
+        score: undefined
+      },
+      {
+        type: YATZY_TYPES.YATZY,
+        score: undefined
+      }
+
+    ]
+  }
+]
+
 export {
   YATZY_TYPES,
   YATZY_COMBINATIONS,
   BONUS_MIN_NEEDED_POINTS,
   BONUS_REWARD,
-  DEFAULT_DICES
+  DEFAULT_DICES,
+  DEFAULT_SCORE
 }

@@ -35,13 +35,7 @@ function DiceIcon({ value, size = 28 }) {
 
 export default function CombinationPicker({ onSelect, isOpen = false, allowedCombinations = [] }) {
   const upperSection = YATZY_COMBINATIONS.filter((combination) => combination.section === "upper" && allowedCombinations.some(allowed => allowed.type === combination.type));
-  const lowerSection = YATZY_COMBINATIONS.filter((combination) => combination.section === "lower" /*&& allowedCombinations.some(allowed => allowed.type === combination.type)*/);
-
-  const handleSelect = (combo) => {
-    /*if (onSelect) {
-      onSelect(combo);
-    }*/
-  };
+  const lowerSection = YATZY_COMBINATIONS.filter((combination) => combination.section === "lower" && allowedCombinations.some(allowed => allowed.type === combination.type));
 
   if (!isOpen) return null;
 
@@ -76,7 +70,7 @@ export default function CombinationPicker({ onSelect, isOpen = false, allowedCom
                 {upperSection.map((combo) => (
                   <button
                     key={combo.type}
-                    onClick={() => handleSelect(combo)}
+                    onClick={() => onSelect(combo)}
                     className="flex flex-row items-center justify-start gap-1.5 p-2 rounded-xl bg-gray-700/50 border border-gray-600/50 active:scale-95 active:bg-emerald-900/50 hover:bg-emerald-900/40 hover:border-emerald-700/50 transition-all cursor-pointer"
                   >
                     <DiceIcon value={DICE_DOTS[combo.type]} size={32} />
@@ -98,8 +92,8 @@ export default function CombinationPicker({ onSelect, isOpen = false, allowedCom
               <div className="flex flex-col gap-2">
                 {lowerSection.map((combo) => (
                   <button
-                    key={combo.key}
-                    onClick={() => handleSelect(combo)}
+                    key={combo.type}
+                    onClick={() => onSelect(combo)}
                     className="flex items-center gap-3 p-3.5 rounded-xl bg-gray-700/50 border border-gray-600/50 active:scale-95 active:bg-emerald-900/50 hover:bg-emerald-900/40 hover:border-emerald-700/50 transition-all cursor-pointer"
                   >
                     <span className="text-sm font-semibold text-gray-300">
