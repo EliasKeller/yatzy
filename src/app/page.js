@@ -61,39 +61,39 @@ export default function Home() {
         },
         {
           type: YATZY_TYPES.ONE_PAIR,
-          score: undefined
+          score: 1
         },
         {
           type: YATZY_TYPES.TWO_PAIRS,
-          score: undefined
+          score: 2
         },
         {
           type: YATZY_TYPES.THREE_OF_A_KIND,
-          score: undefined
+          score: 3
         },
         {
           type: YATZY_TYPES.FOUR_OF_A_KIND,
-          score: undefined
+          score: 4
         },
         {
           type: YATZY_TYPES.SMALL_STREET,
-          score: undefined
+          score: 5
         },
         {
           type: YATZY_TYPES.BIG_STREET,
-          score: undefined
+          score: 6
         },
         {
           type: YATZY_TYPES.FULL_HOUSE,
-          score: undefined
+          score: 7
         },
         {
           type: YATZY_TYPES.CHANCE,
-          score: undefined
+          score: 8
         },
         {
           type: YATZY_TYPES.YATZY,
-          score: undefined
+          score: 9
         }
 
       ]
@@ -282,6 +282,19 @@ export default function Home() {
     );
   };
 
+  const onCombinationSelect = (combination) => {
+    console.log("Selected combination:", combination);
+  
+    
+    // Hier kannst du die Logik implementieren, um die Punkte basierend auf der ausgewählten Kombination zu berechnen und den Spielerstand zu aktualisieren.
+    setIsCombinationPickerOpen(false);
+    console.log(YATZY_COMBINATIONS);
+
+
+
+    switchPlayer();
+  }
+
   /* ----------------------------------------------------------- 
                               EFFECT 
 -----------------------------------------------------------  */
@@ -343,7 +356,7 @@ export default function Home() {
       >
         WÜRFELN!
       </button>
-      <CombinationPicker onSelect={console.log} isOpen={isCombinationPickerOpen} allowedCombinations={allowedCombinations} />
+      <CombinationPicker onSelect={onCombinationSelect} isOpen={isCombinationPickerOpen} allowedCombinations={allowedCombinations} />
       <Scoreboard players={players} currentScore={defaultScore} />
     </div>
   );

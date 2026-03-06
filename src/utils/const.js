@@ -28,6 +28,9 @@ const YATZY_COMBINATIONS = [
       if (diceValues.length !== 5) return false;
 
       return diceValues.includes(1)
+    },
+    calculateScore(diceValues = []) {
+      return diceValues.filter(value => value === 1).length * 1;
     }
   },
   {
@@ -38,6 +41,9 @@ const YATZY_COMBINATIONS = [
       if (diceValues.length !== 5) return false;
 
       return diceValues.includes(2)
+    },
+    calculateScore(diceValues = []) {
+      return diceValues.filter(value => value === 2).length * 2;
     }
   },
   {
@@ -48,6 +54,9 @@ const YATZY_COMBINATIONS = [
       if (diceValues.length !== 5) return false;
 
       return diceValues.includes(3)
+    },
+    calculateScore(diceValues = []) {
+      return diceValues.filter(value => value === 3).length * 3;
     }
   },
   {
@@ -58,6 +67,9 @@ const YATZY_COMBINATIONS = [
       if (diceValues.length !== 5) return false;
 
       return diceValues.includes(4)
+    },
+    calculateScore(diceValues = []) {
+      return diceValues.filter(value => value === 4).length * 4;
     }
   },
   {
@@ -68,6 +80,9 @@ const YATZY_COMBINATIONS = [
       if (diceValues.length !== 5) return false;
 
       return diceValues.includes(5)
+    },
+    calculateScore(diceValues = []) {
+      return diceValues.filter(value => value === 5).length * 5;
     }
   },
   {
@@ -78,6 +93,9 @@ const YATZY_COMBINATIONS = [
       if (diceValues.length !== 5) return false;
 
       return diceValues.includes(6)
+    },
+    calculateScore(diceValues = []) {
+      return diceValues.filter(value => value === 6).length * 6;
     }
   },
   {
@@ -93,6 +111,15 @@ const YATZY_COMBINATIONS = [
       }
 
       return Object.values(counts).some(c => c >= 2);
+    },
+    calculateScore(diceValues = []) {
+      const counts = {};
+      for (const value of diceValues) {
+        counts[value] = (counts[value] || 0) + 1;
+      }
+      
+      const pairs = Object.entries(counts).filter(([value, count]) => count >= 2);
+      return Math.max(...pairs.map(([value, count]) => parseInt(value))) * 2;
     }
   },
   {
@@ -109,6 +136,19 @@ const YATZY_COMBINATIONS = [
 
       const pairsCount = Object.values(counts).filter(c => c >= 2).length;
       return pairsCount >= 2;
+    },
+    calculateScore(diceValues = []) {
+      const counts = {};
+      for (const value of diceValues) {
+        counts[value] = (counts[value] || 0) + 1;
+      }
+      
+      const pairs = Object.entries(counts).filter(([value, count]) => count >= 2);
+      const topTwoPairs = pairs
+        .map(([value, count]) => parseInt(value))
+        .sort((a, b) => b - a)
+        .slice(0, 2);
+      return topTwoPairs.reduce((sum, value) => sum + value, 0) * 2;
     }
   },
   {
@@ -124,6 +164,15 @@ const YATZY_COMBINATIONS = [
       }
 
       return Object.values(counts).some(c => c >= 3);
+    },
+    calculateScore(diceValues = []) {
+      const counts = {};
+      for (const value of diceValues) {
+        counts[value] = (counts[value] || 0) + 1;
+      }
+      
+      const threeOfKind = Object.entries(counts).find(([value, count]) => count >= 3);
+      return threeOfKind[0] * 3;
     }
   },
   {
@@ -139,6 +188,15 @@ const YATZY_COMBINATIONS = [
       }
 
       return Object.values(counts).some(c => c >= 4);
+    },
+    calculateScore(diceValues = []) {
+     const counts = {};
+      for (const value of diceValues) {
+        counts[value] = (counts[value] || 0) + 1;
+      }
+      
+      const fourOfKind = Object.entries(counts).find(([value, count]) => count >= 4);
+      return fourOfKind[0] * 4;
     }
   },
   {
@@ -149,6 +207,9 @@ const YATZY_COMBINATIONS = [
       if (diceValues.length !== 5) return false;
 
       return arraysEqual(diceValues.sort(), [1, 2, 3, 4, 5])
+    },
+    calculateScore(diceValues = []) {
+      return 15;
     }
   },
   {
@@ -159,6 +220,9 @@ const YATZY_COMBINATIONS = [
       if (diceValues.length !== 5) return false;
 
       return arraysEqual(diceValues.sort(), [2, 3, 4, 5, 6])
+    },
+    calculateScore(diceValues = []) {
+      return 20;
     }
   },
   {
@@ -174,6 +238,9 @@ const YATZY_COMBINATIONS = [
       }
       const countValues = Object.values(counts);
       return countValues.includes(3) && countValues.includes(2);
+    },
+    calculateScore(diceValues = []) {
+        return diceValues.reduce((sum, value) => sum + value, 0);
     }
   },
   {
@@ -184,6 +251,9 @@ const YATZY_COMBINATIONS = [
       if (diceValues.length !== 5) return false;
 
       return true;
+    },
+    calculateScore(diceValues = []) {
+      return diceValues.reduce((sum, value) => sum + value, 0);
     }
   },
   {
@@ -198,6 +268,9 @@ const YATZY_COMBINATIONS = [
         return false;
       }
       return true;
+    },
+    calculateScore(diceValues = []) {
+      return diceValues.reduce((sum, value) => sum + value, 0);
     }
   },
 ];
