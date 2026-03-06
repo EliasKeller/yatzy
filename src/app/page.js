@@ -3,9 +3,9 @@
 import { useEffect, useState } from "react";
 import Dice from "./components/dice";
 import { DEFAULT_DICES, DEFAULT_SCORE, YATZY_COMBINATIONS, YATZY_TYPES } from "@/utils/const";
+import { isCombinationAvailableForPlayer } from "@/utils/utils";
 import Scoreboard from "./components/scoreboard";
 import CombinationPicker from "./components/combinationPicker";
-import { isCombinationAvailableForPlayer } from "@/utils/utils";
 
 export default function Home() {
   /* ----------------------------------------------------------- 
@@ -92,8 +92,8 @@ export default function Home() {
         return { ...combination, score: selectedCombination.calculateScore(dices.map(dice => dice.value)) };
       } else {
         return { ...combination };
-        }
-      });
+      }
+    });
 
     setScore(prev => prev.map(score => score.playerId === playerScore.playerId ? playerScore : score));
     switchPlayer();
@@ -129,17 +129,33 @@ export default function Home() {
   -----------------------------------------------------------  */
 
   return (
-    <div className="h-screen flex flex-col items-center justify-center gap-8 bg-gray-600">
-      <h1 className="text-4xl font-bold text-white">Yatzy</h1>
-      <h1 className="text-2xl font-semibold text-white">{currentRoundOfPlayer === 0 ? "" : `${"Runde " + (currentRoundOfPlayer) + " - "}`}{players[currentPlayerIndex].name} ist am Zug</h1>
-      <div className="flex gap-4">
+    <div className="min-h-screen flex flex-col items-center justify-center gap-4 sm:gap-6 md:gap-8 bg-gray-600 px-4 py-6 sm:py-8">
+      <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold text-white">Yatzy</h1>
+
+      {/* ---- Player Cards ---- */}
+      <div className="flex items-center gap-2 sm:gap-3 md:gap-4 w-full max-w-md md:max-w-none">
         {players.map((player, index) => (
-          <div key={player.id} className={["px-6 py-4 rounded-lg shadow-md", index === currentPlayerIndex ? "bg-emerald-400 text-black" : "bg-gray-800 text-white"].join(" ")}>
-            <h2 className="text-2xl font-semibold">{player.name}</h2>
+          <div
+            key={player.id}
+            className={[
+              "flex-1 min-w-[80px] max-w-[140px] sm:min-w-[100px] sm:max-w-[180px] px-3 sm:px-4 md:px-6 py-2 sm:py-3 md:py-4 rounded-xl shadow-lg transition-all duration-300",
+              index === currentPlayerIndex
+                ? "bg-emerald-500 text-gray-900 ring-2 ring-emerald-300 scale-105"
+                : "bg-gray-800/80 text-gray-300",
+            ].join(" ")}
+          >
+            <div className="h-2 text-xs sm:text-sm font-medium text-emerald-900">
+              {index === currentPlayerIndex && Array.from({ length: currentRoundOfPlayer }).map((_, i) => (
+                <span key={i}>•</span>
+              ))}
+            </div>
+            <h3 className="text-sm sm:text-lg md:text-xl font-bold truncate">{player.name}</h3>
           </div>
         ))}
       </div>
-      <div className="flex gap-4 flex-wrap justify-center">
+
+      {/* ---- Dices ---- */}
+      <div className="flex gap-2 sm:gap-3 md:gap-4 flex-wrap justify-center max-w-xs sm:max-w-md md:max-w-none">
         {dices.map((dice, index) => (
           <Dice key={dice.id}
             id={dice.id}
@@ -154,12 +170,14 @@ export default function Home() {
           />
         ))}
       </div>
+
       <button
         onClick={rollAll}
-        className={`px-8 py-3 text-lg font-semibold rounded-lg bg-gray-800 text-white hover:bg-gray-700 ${!(currentRoundOfPlayer < MAX_ROUNDS_PER_PLAYER) ? "invisible" : ""}`}
+        className={`px-6 sm:px-8 py-2.5 sm:py-3 text-base sm:text-lg font-semibold rounded-lg bg-gray-800 text-white hover:bg-gray-700 cursor-pointer ${!(currentRoundOfPlayer < MAX_ROUNDS_PER_PLAYER) ? "invisible" : ""}`}
       >
-        WÜRFELN!
+        {"Roll the dices!"}
       </button>
+
       <CombinationPicker onSelect={onCombinationSelect} isOpen={isCombinationPickerOpen} allowedCombinations={allowedCombinations} />
       <Scoreboard players={players} currentScore={score} />
     </div>
