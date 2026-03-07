@@ -133,23 +133,37 @@ export default function Home() {
       <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold text-white">Yatzy</h1>
 
       {/* ---- Player Cards ---- */}
-      <div className="flex items-center gap-2 sm:gap-3 md:gap-4 w-full max-w-md md:max-w-none">
+      <div className="flex justify-center items-center gap-2 sm:gap-3 md:gap-4 w-full max-w-md md:max-w-none">
         {players.map((player, index) => (
           <div
             key={player.id}
             className={[
-              "flex-1 min-w-[80px] max-w-[140px] sm:min-w-[100px] sm:max-w-[180px] px-3 sm:px-4 md:px-6 py-2 sm:py-3 md:py-4 rounded-xl shadow-lg transition-all duration-300",
+              "relative flex items-center",
+              "flex-1 min-w-[80px] max-w-[140px] sm:min-w-[100px] sm:max-w-[180px]",
+              "h-16", // feste Höhe für alle Cards
+              "px-3 sm:px-4 md:px-6",
+              "rounded-xl shadow-lg transition-all duration-300",
               index === currentPlayerIndex
-                ? "bg-emerald-500 text-gray-900 ring-2 ring-emerald-300 scale-105"
-                : "bg-gray-800/80 text-gray-300",
+                ? "bg-emerald-500 text-gray-900 ring-2 ring-emerald-300"
+                : "text-white border border-dotted",
             ].join(" ")}
           >
-            <div className="h-2 text-xs sm:text-sm font-medium text-emerald-900">
-              {index === currentPlayerIndex && Array.from({ length: currentRoundOfPlayer }).map((_, i) => (
-                <span key={i}>•</span>
-              ))}
-            </div>
-            <h3 className="text-sm sm:text-lg md:text-xl font-bold truncate">{player.name}</h3>
+            {/* Punkte */}
+            {index === currentPlayerIndex && (
+              <div className="absolute top-3 left-5 flex gap-1">
+                {Array.from({ length: currentRoundOfPlayer }).map((_, i) => (
+                  <span
+                    key={i}
+                    className="h-2 w-2 bg-emerald-900 rounded-full"
+                  />
+                ))}
+              </div>
+            )}
+
+            {/* Name */}
+            <h3 className="text-sm sm:text-lg md:text-xl font-bold truncate">
+              {player.name}
+            </h3>
           </div>
         ))}
       </div>

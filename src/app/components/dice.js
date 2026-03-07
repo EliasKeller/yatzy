@@ -22,9 +22,9 @@ export default function Dice({ index, id, initValue, initIsSelected, rollTrigger
     let rollCount = 0;
 
     const rollInterval = setInterval(() => {
-      if (isSelected){
+      if (isSelected) {
         return;
-      } 
+      }
       setCurrentValue(Math.floor(Math.random() * 6) + 1);
       rollCount++;
 
@@ -40,7 +40,7 @@ export default function Dice({ index, id, initValue, initIsSelected, rollTrigger
     return () => clearInterval(rollInterval);
   }, [rollTrigger]);
 
-  
+
   const getDotPositions = (number) => {
     const positions = {
       1: ["center"],
@@ -63,7 +63,7 @@ export default function Dice({ index, id, initValue, initIsSelected, rollTrigger
     "bottom-right": 8,
   };
 
-  const onSelect = ()  => {
+  const onSelect = () => {
     if (isSelectionDisabled) {
       return;
     }
@@ -75,7 +75,7 @@ export default function Dice({ index, id, initValue, initIsSelected, rollTrigger
   return (
     <div
       className={[
-        "relative w-32 h-32 shrink-0  border-4 border-gray-800 rounded-lg shadow-lg",
+        "relative w-24 h-24 md:h-32 md:w-32  shrink-0  border-4 border-gray-800 rounded-lg shadow-lg",
         "transition-transform duration-200 transform-gpu",
         isRolling ? "animate-[roll_800ms_ease-in-out_infinite]" : "hover:scale-105",
         isSelected ? "bg-gray-800" : "bg-white",
@@ -91,9 +91,8 @@ export default function Dice({ index, id, initValue, initIsSelected, rollTrigger
           return (
             <div
               key={index}
-              className={`w-4 h-4 rounded-full transition-all duration-200 transform-gpu ${
-                shouldShow ? `${isSelected ? "bg-white" : "bg-gray-800"} scale-100` : `bg-transparent scale-0`
-              }`}
+              className={`w-4 h-4 rounded-full transition-all duration-200 transform-gpu ${shouldShow ? `${isSelected ? "bg-white" : "bg-gray-800"} scale-100` : `bg-transparent scale-0`
+                }`}
             />
           );
         })}
