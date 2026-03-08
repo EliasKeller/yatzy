@@ -14,17 +14,17 @@ export default function Home() {
   const defaultPlayers = [
     {
       id: 1,
-      name: "Pkjasdfkjahsfklasjlasjflasjlasfjalsfkj1",
+      name: "Player 1",
       score: 0
     },
     {
       id: 2,
-      name: "asdf 2",
+      name: "Player 2",
       score: 0
     },
     {
       id: 3,
-      name: "Pkjasdfkjahsfklasjlasjflasjlasfjalsfkj3",
+      name: "Player 3",
       score: 0
     },
   ];
