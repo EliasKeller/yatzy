@@ -53,6 +53,19 @@ export default function Home() {
       score: INITIAL_SCORE_OF_PLAYER
     }))
 
+    /*const initialGameBoard = {
+      players: players.map(player => ({
+        ...player,
+        score: INITIAL_SCORE_OF_PLAYER
+      })),
+      state: {
+        currentPlayerIndex: 0,
+        currentRoundOfPlayer: 0,
+        //dices: DEFAULT_DICES,
+      }
+
+    }*/
+
     setGameBoard(initialGameBoard);
   }
 
@@ -91,25 +104,29 @@ export default function Home() {
 
   const onCombinationSelect = (selectedCombination) => {
     setIsCombinationPickerOpen(false);
+    const diceValues = dices.map(dice => dice.value);
+    const currentPlayer = gameBoard[currentPlayerIndex];
+    let updatedPlayerScore = gameBoard
+      .find((player) => player.id === currentPlayer.id).score
+      .map(combination => {
+        if (combination.type === selectedCombination.type) {
+          return { ...combination, score: selectedCombination.calculateScore(diceValues) };
+        } else {
+          return { ...combination };
+        }
+      });
 
-    let playerScore = gameBoard.find((player) => player.id === gameBoard[currentPlayerIndex].id).score;
-    playerScore = playerScore.map(combination => {
-      if (combination.type === selectedCombination.type) {
-        return { ...combination, score: selectedCombination.calculateScore(dices.map(dice => dice.value)) };
-      } else {
-        return { ...combination };
-      }
+    setGameBoard((prevGameBoard) => {
+      return prevGameBoard.map((player) => {
+        if (player.id !== currentPlayer.id) return player;
+
+        return {
+          ...player,
+          score: updatedPlayerScore
+        };
+      });
     });
 
-    const updatedGameBoard = gameBoard.map(player => {
-      if (player.id === gameBoard[currentPlayerIndex].id) {
-        return { ...player, score: playerScore };
-      } else {
-        return { ...player };
-      }
-    });
-
-    setGameBoard(updatedGameBoard);
     switchPlayer();
   }
 
