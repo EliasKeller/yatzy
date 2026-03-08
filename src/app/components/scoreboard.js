@@ -5,7 +5,7 @@ import { BONUS_MIN_NEEDED_POINTS, BONUS_REWARD, YATZY_COMBINATIONS } from "@/uti
 import { AppsListDetail20Regular } from "@fluentui/react-icons";
 import { AnimatePresence, motion } from "framer-motion";
 
-export default function Scoreboard({ players, currentScore = [] }) {
+export default function Scoreboard({ players, currentScore = [], isCombinationPickerOpen = false }) {
   const [isOpen, setIsOpen] = useState(false);
 
   const upperSection = YATZY_COMBINATIONS.filter((c) => c.section === "upper");
@@ -71,7 +71,7 @@ export default function Scoreboard({ players, currentScore = [] }) {
       <button
         type="button"
         onClick={() => setIsOpen(!isOpen)}
-        className="
+        className={`
           fixed bottom-5 right-5 z-[60]
           h-14 w-14 rounded-full
           bg-emerald-500 text-white
@@ -80,7 +80,7 @@ export default function Scoreboard({ players, currentScore = [] }) {
           active:scale-95
           flex items-center justify-center
           cursor-pointer
-        "
+        `}
         aria-label="Open scoreboard"
       >
         <AppsListDetail20Regular className="h-6 w-6" />
@@ -91,7 +91,8 @@ export default function Scoreboard({ players, currentScore = [] }) {
         {isOpen && (
 
           <motion.div
-            className="fixed inset-0 z-50 flex items-end md:items-center justify-center bg-black/60"
+            className={`fixed inset-0 z-50 flex items-end md:items-center justify-center ${isCombinationPickerOpen ? "" : "bg-black/60"
+              }`}
             onClick={() => setIsOpen(false)}
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
@@ -118,7 +119,7 @@ export default function Scoreboard({ players, currentScore = [] }) {
               <div className="flex justify-center pt-3 md:hidden">
                 <div className="w-10 h-1 rounded-full bg-gray-600" />
               </div>
-              
+
               {/* ---- Header ---- */}
               <div className="flex items-center justify-between px-6 pt-6 pb-2">
                 <h2 className="text-2xl font-bold text-emerald-400">
@@ -142,7 +143,7 @@ export default function Scoreboard({ players, currentScore = [] }) {
                       {players.map((player) => (
                         <th
                           key={player.id}
-                          className="py-2 px-3 text-center font-semibold border-b border-gray-700 text-emerald-300 min-w-20"
+                          className="py-2 px-3 text-center font-semibold border-b border-gray-700 text-emerald-300 min-w-20 max-w-[140px] truncate"
                         >
                           {player.name}
                         </th>

@@ -51,11 +51,7 @@ function DiceIcon({ value, size = 28 }) {
   );
 }
 
-export default function CombinationPicker({
-  onSelect,
-  isOpen = false,
-  allowedCombinations = [],
-}) {
+export default function CombinationPicker({ onSelect, isOpen = false, allowedCombinations = [], diceValues = [] }) {
   const [showHint, setShowHint] = useState(false);
   const hintTimeoutRef = useRef(null);
 
@@ -138,6 +134,14 @@ export default function CombinationPicker({
                 <div className="w-10 h-1 rounded-full bg-gray-600" />
               </div>
 
+              <div
+                className="flex flex-row items-center justify-center gap-1.5 pt-4"
+              >
+                {diceValues.map((value, index) => (
+                  <DiceIcon key={index} value={value} size={32} />
+                ))}
+              </div>
+
               <div className="flex items-center justify-between px-5 pt-4 pb-2">
                 <h2 className="text-xl font-bold text-emerald-400">
                   Choose a combination
@@ -145,7 +149,7 @@ export default function CombinationPicker({
               </div>
 
               {upperSection.length > 0 && (
-                <div className="px-4 pb-2">
+                <div className="px-4 pt-2 pb-2">
                   <p className="pb-2 px-1 text-xs font-bold uppercase tracking-wider text-emerald-500">
                     Upper Section
                   </p>

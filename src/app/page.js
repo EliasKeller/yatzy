@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import Dice from "./components/dice";
-import { DEFAULT_DICES, DEFAULT_SCORE, YATZY_COMBINATIONS, YATZY_TYPES } from "@/utils/const";
+import { DEFAULT_DICES, DEFAULT_SCORE, MAX_ROUNDS_PER_PLAYER, YATZY_COMBINATIONS, YATZY_TYPES } from "@/utils/const";
 import { isCombinationAvailableForPlayer } from "@/utils/utils";
 import Scoreboard from "./components/scoreboard";
 import CombinationPicker from "./components/combinationPicker";
@@ -14,23 +14,20 @@ export default function Home() {
   const defaultPlayers = [
     {
       id: 1,
-      name: "Player 1",
+      name: "Pkjasdfkjahsfklasjlasjflasjlasfjalsfkj1",
       score: 0
     },
     {
       id: 2,
-      name: "Player 2",
+      name: "asdf 2",
       score: 0
     },
     {
       id: 3,
-      name: "Player 3",
+      name: "Pkjasdfkjahsfklasjlasjflasjlasfjalsfkj3",
       score: 0
-    }
+    },
   ];
-
-  const MAX_ROUNDS_PER_PLAYER = 3;
-
 
   /* ----------------------------------------------------------- 
                                 STATES 
@@ -130,10 +127,10 @@ export default function Home() {
 
   return (
     <div className="min-h-screen flex flex-col items-center justify-center gap-4 sm:gap-6 md:gap-8 bg-gray-600 px-4 py-6 sm:py-8">
-      <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold text-white">Yatzy</h1>
+      <h1 className="text-4xl sm:text-4xl md:text-5xl font-bold text-white">Yatzy</h1>
 
       {/* ---- Player Cards ---- */}
-      <div className="flex justify-center items-center gap-2 sm:gap-3 md:gap-4 w-full max-w-md md:max-w-none">
+      <div className="flex flex-wrap justify-center items-center gap-2 sm:gap-3 md:gap-4 w-full max-w-md md:max-w-none">
         {players.map((player, index) => (
           <div
             key={player.id}
@@ -148,13 +145,12 @@ export default function Home() {
                 : "text-white border border-dotted",
             ].join(" ")}
           >
-            {/* Punkte */}
             {index === currentPlayerIndex && (
-              <div className="absolute top-3 left-5 flex gap-1">
+              <div className="absolute inset-x-0 bottom-3 grid grid-cols-3 gap-1 px-3">
                 {Array.from({ length: currentRoundOfPlayer }).map((_, i) => (
                   <span
                     key={i}
-                    className="h-2 w-2 bg-emerald-900 rounded-full"
+                    className="h-1 bg-emerald-900 rounded-full"
                   />
                 ))}
               </div>
@@ -192,8 +188,8 @@ export default function Home() {
         {"Roll the dices!"}
       </button>
 
-      <CombinationPicker onSelect={onCombinationSelect} isOpen={isCombinationPickerOpen} allowedCombinations={allowedCombinations} />
-      <Scoreboard players={players} currentScore={score} />
+      <CombinationPicker onSelect={onCombinationSelect} isOpen={isCombinationPickerOpen} allowedCombinations={allowedCombinations} diceValues={dices.map(dice => dice.value)} />
+      <Scoreboard players={players} currentScore={score} isCombinationPickerOpen={isCombinationPickerOpen} />
     </div>
   );
 }

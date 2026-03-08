@@ -1,5 +1,7 @@
 import { arraysEqual } from "./utils";
 
+const MAX_ROUNDS_PER_PLAYER = 3;
+
 const YATZY_TYPES = {
   ONE: "ONE",
   TWO: "TWO",
@@ -509,6 +511,7 @@ const DEFAULT_SCORE = [
 ]
 
 export {
+  MAX_ROUNDS_PER_PLAYER,
   YATZY_TYPES,
   YATZY_COMBINATIONS,
   BONUS_MIN_NEEDED_POINTS,
