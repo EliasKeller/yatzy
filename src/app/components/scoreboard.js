@@ -142,7 +142,7 @@ export default function Scoreboard({ gameBoard, isCombinationPickerOpen = false 
                     <tr>
                       <th className="text-left py-2 px-3 text-gray-400 font-medium border-b border-gray-700 w-40">
                       </th>
-                      {gameBoard.map((player) => (
+                      {gameBoard.players.map((player) => (
                         <th
                           key={player.id}
                           className="py-2 px-3 text-center font-semibold border-b border-gray-700 text-emerald-300 min-w-20 max-w-[140px] truncate"
@@ -163,7 +163,7 @@ export default function Scoreboard({ gameBoard, isCombinationPickerOpen = false 
                         <td className="py-2 px-3 text-gray-300 font-medium">
                           {combo.label}
                         </td>
-                        {gameBoard.map((player) => (
+                        {gameBoard.players.map((player) => (
                           <td
                             key={player.id}
                             className="py-2 px-3 text-center text-gray-500"
@@ -179,7 +179,7 @@ export default function Scoreboard({ gameBoard, isCombinationPickerOpen = false 
                       <td className="py-2 px-3 text-emerald-300 font-semibold">
                         Summe oben
                       </td>
-                      {gameBoard.map((player) => (
+                      {gameBoard.players.map((player) => (
                         <td
                           key={player.id}
                           className="py-2 px-3 text-center font-semibold text-emerald-400"
@@ -194,7 +194,7 @@ export default function Scoreboard({ gameBoard, isCombinationPickerOpen = false 
                       <td className="py-2 px-3 text-emerald-300 font-semibold">
                         {"Bonus (≥ 63)"}
                       </td>
-                      {gameBoard.map((player) => (
+                      {gameBoard.players.map((player) => (
                         <td
                           key={player.id}
                           className="py-2 px-3 text-center font-semibold text-gray-500"
@@ -213,7 +213,7 @@ export default function Scoreboard({ gameBoard, isCombinationPickerOpen = false 
                         <td className="py-2 px-3 text-gray-300 font-medium">
                           {combo.label}
                         </td>
-                        {gameBoard.map((player) => (
+                        {gameBoard.players.map((player) => (
                           <td
                             key={player.id}
                             className="py-2 px-3 text-center text-gray-500"
@@ -229,7 +229,7 @@ export default function Scoreboard({ gameBoard, isCombinationPickerOpen = false 
                       <td className="py-3 px-3 text-emerald-300 font-bold text-base">
                         Gesamt
                       </td>
-                      {gameBoard.map((player) => (
+                      {gameBoard.players.map((player) => (
                         <td
                           key={player.id}
                           className="py-3 px-3 text-center font-bold text-emerald-300 text-base"

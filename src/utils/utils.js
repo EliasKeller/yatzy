@@ -10,7 +10,7 @@ const isCombinationAvailableForPlayer = (playerId, gameBoard, combinationType) =
 }
 
 const getPlayerScore = (playerId, gameBoard) => {
-    return gameBoard.find((player) => player.id === playerId).score;
+    return gameBoard.players.find((player) => player.id === playerId).score;
 }
 
 export {

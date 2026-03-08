@@ -38,8 +38,6 @@ export default function Home() {
   const [dices, setDices] = useState(DEFAULT_DICES);
   const [rollTrigger, setRollTrigger] = useState(0);
   const [resetTrigger, setResetTrigger] = useState(0);
-  const [currentPlayerIndex, setCurrentPlayerIndex] = useState(0);
-  const [currentRoundOfPlayer, setCurrentRoundOfPlayer] = useState(0);
   const [isCombinationPickerOpen, setIsCombinationPickerOpen] = useState(false);
   const [allowedCombinations, setAllowedCombinations] = useState([]);
 
@@ -48,30 +46,31 @@ export default function Home() {
                                 HELPERS 
   -----------------------------------------------------------  */
   const handleStartGame = (players) => {
-    const initialGameBoard = players.map(player => ({
-      ...player,
-      score: INITIAL_SCORE_OF_PLAYER
-    }))
-
-    /*const initialGameBoard = {
+    const initialGameBoard = {
       players: players.map(player => ({
         ...player,
         score: INITIAL_SCORE_OF_PLAYER
       })),
       state: {
-        currentPlayerIndex: 0,
-        currentRoundOfPlayer: 0,
+        activePlayerId: players[0].id,
+        currentRound: 0,
         //dices: DEFAULT_DICES,
       }
 
-    }*/
+    }
 
     setGameBoard(initialGameBoard);
   }
 
   const rollAll = () => {
-    if (currentRoundOfPlayer < MAX_ROUNDS_PER_PLAYER) {
-      setCurrentRoundOfPlayer((currentRound) => currentRound + 1);
+    if (gameBoard.state.currentRound < MAX_ROUNDS_PER_PLAYER) {
+      setGameBoard((prevGameBoard) => ({
+        ...prevGameBoard,
+        state: {
+          ...prevGameBoard.state,
+          currentRound: prevGameBoard.state.currentRound + 1,
+        }
+      }));
       setRollTrigger((rollCount) => rollCount + 1);
     } else {
       switchPlayer();
@@ -88,8 +87,20 @@ export default function Home() {
   const cloneDices = (arr) => arr.map(d => ({ ...d }));
 
   const switchPlayer = () => {
-    setCurrentRoundOfPlayer(0);
-    setCurrentPlayerIndex((currentIndex) => (currentIndex + 1) % gameBoard.length);
+
+    setGameBoard((prevGameBoard) => {
+      const currentIndex = prevGameBoard.players.findIndex(player => player.id === prevGameBoard.state.activePlayerId);
+      const nextPlayerId = prevGameBoard.players[(currentIndex + 1) % prevGameBoard.players.length].id;
+      return {
+        ...prevGameBoard,
+        state: {
+          ...prevGameBoard.state,
+          activePlayerId: nextPlayerId,
+          currentRound: 0,
+        }
+      }
+    });
+
     setDices(cloneDices(DEFAULT_DICES));
     setResetTrigger((resetCount) => resetCount + 1);
   }
@@ -105,9 +116,8 @@ export default function Home() {
   const onCombinationSelect = (selectedCombination) => {
     setIsCombinationPickerOpen(false);
     const diceValues = dices.map(dice => dice.value);
-    const currentPlayer = gameBoard[currentPlayerIndex];
     let updatedPlayerScore = gameBoard
-      .find((player) => player.id === currentPlayer.id).score
+      .find((player) => player.id === gameBoard.state.activePlayerId).score
       .map(combination => {
         if (combination.type === selectedCombination.type) {
           return { ...combination, score: selectedCombination.calculateScore(diceValues) };
@@ -118,7 +128,7 @@ export default function Home() {
 
     setGameBoard((prevGameBoard) => {
       return prevGameBoard.map((player) => {
-        if (player.id !== currentPlayer.id) return player;
+        if (player.id !== prevGameBoard.state.activePlayerId) return player;
 
         return {
           ...player,
@@ -135,13 +145,17 @@ export default function Home() {
 -----------------------------------------------------------  */
 
   useEffect(() => {
-    if (currentRoundOfPlayer >= MAX_ROUNDS_PER_PLAYER) {
+    if (!gameBoard) {
+      return
+    }
+
+    if (gameBoard.state.currentRound >= MAX_ROUNDS_PER_PLAYER) {
 
       setTimeout(() => {
         const diceValues = dices.map(dice => dice.value);
         const allowed = [];
         YATZY_COMBINATIONS.forEach((combination) => {
-          if (combination.isValidCombination(diceValues) && isCombinationAvailableForPlayer(gameBoard[currentPlayerIndex].id, gameBoard, combination.type)) {
+          if (combination.isValidCombination(diceValues) && isCombinationAvailableForPlayer(gameBoard.state.activePlayerId, gameBoard, combination.type)) {
             allowed.push(combination);
 
           }
@@ -182,7 +196,7 @@ export default function Home() {
 
       {/* ---- Player Cards ---- */}
       <div className="flex flex-wrap justify-center items-center gap-2 sm:gap-3 md:gap-4 w-full max-w-md md:max-w-none">
-        {gameBoard.map((player, index) => (
+        {gameBoard.players.map((player) => (
           <div
             key={player.id}
             className={[
@@ -191,14 +205,14 @@ export default function Home() {
               "h-16",
               "px-3 sm:px-4 md:px-6",
               "rounded-xl shadow-lg transition-all duration-300",
-              index === currentPlayerIndex
+              player.id === gameBoard.state.activePlayerId
                 ? "bg-emerald-500 text-gray-900 ring-2 ring-emerald-300"
                 : "text-white border border-dashed",
             ].join(" ")}
           >
-            {index === currentPlayerIndex && (
+            {player.id === gameBoard.state.activePlayerId && (
               <div className="absolute inset-x-0 bottom-0 grid grid-cols-3 gap-1 px-3">
-                {Array.from({ length: currentRoundOfPlayer }).map((_, i) => (
+                {Array.from({ length: gameBoard.state.currentRound }).map((_, i) => (
                   <span
                     key={i}
                     className="h-1.5 bg-emerald-900 rounded-full"
@@ -227,14 +241,14 @@ export default function Home() {
             resetTrigger={resetTrigger}
             onValueChange={updateDiceValue}
             onDiceSelect={onDiceSelect}
-            isSelectionDisabled={currentRoundOfPlayer === 0}
+            isSelectionDisabled={gameBoard.state.currentRound === 0}
           />
         ))}
       </div>
 
       <button
         onClick={rollAll}
-        className={`px-6 sm:px-8 py-2.5 sm:py-3 text-base sm:text-lg font-semibold rounded-lg bg-gray-800 text-white hover:bg-gray-700 cursor-pointer ${!(currentRoundOfPlayer < MAX_ROUNDS_PER_PLAYER) ? "invisible" : ""}`}
+        className={`px-6 sm:px-8 py-2.5 sm:py-3 text-base sm:text-lg font-semibold rounded-lg bg-gray-800 text-white hover:bg-gray-700 cursor-pointer ${!(gameBoard.state.currentRound < MAX_ROUNDS_PER_PLAYER) ? "invisible" : ""}`}
       >
         {"Roll the dices!"}
       </button>
