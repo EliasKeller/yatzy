@@ -2,10 +2,12 @@
 
 import { useEffect, useState } from "react";
 import Dice from "./components/dice";
-import { DEFAULT_DICES, DEFAULT_SCORE, MAX_ROUNDS_PER_PLAYER, YATZY_COMBINATIONS, YATZY_TYPES } from "@/utils/const";
+import { DEFAULT_DICES, DEFAULT_SCORE, INITIAL_SCORE_OF_PLAYER, MAX_ROUNDS_PER_PLAYER, YATZY_COMBINATIONS, YATZY_TYPES } from "@/utils/const";
 import { isCombinationAvailableForPlayer } from "@/utils/utils";
 import Scoreboard from "./components/scoreboard";
 import CombinationPicker from "./components/combinationPicker";
+import PlayerSetup from "./components/player-setup";
+import useLocalStorage from "./hooks/useLocalStorage";
 
 export default function Home() {
   /* ----------------------------------------------------------- 
@@ -32,11 +34,10 @@ export default function Home() {
   /* ----------------------------------------------------------- 
                                 STATES 
   -----------------------------------------------------------  */
+  const [gameBoard, setGameBoard] = useLocalStorage("gameBoard", null);
   const [dices, setDices] = useState(DEFAULT_DICES);
   const [rollTrigger, setRollTrigger] = useState(0);
   const [resetTrigger, setResetTrigger] = useState(0);
-  const [players, setPlayers] = useState(defaultPlayers);
-  const [score, setScore] = useState(DEFAULT_SCORE);
   const [currentPlayerIndex, setCurrentPlayerIndex] = useState(0);
   const [currentRoundOfPlayer, setCurrentRoundOfPlayer] = useState(0);
   const [isCombinationPickerOpen, setIsCombinationPickerOpen] = useState(false);
@@ -46,6 +47,14 @@ export default function Home() {
   /* ----------------------------------------------------------- 
                                 HELPERS 
   -----------------------------------------------------------  */
+  const handleStartGame = (players) => {
+    const initialGameBoard = players.map(player => ({
+      ...player,
+      score: INITIAL_SCORE_OF_PLAYER
+    }))
+
+    setGameBoard(initialGameBoard);
+  }
 
   const rollAll = () => {
     if (currentRoundOfPlayer < MAX_ROUNDS_PER_PLAYER) {
@@ -67,7 +76,7 @@ export default function Home() {
 
   const switchPlayer = () => {
     setCurrentRoundOfPlayer(0);
-    setCurrentPlayerIndex((currentIndex) => (currentIndex + 1) % players.length);
+    setCurrentPlayerIndex((currentIndex) => (currentIndex + 1) % gameBoard.length);
     setDices(cloneDices(DEFAULT_DICES));
     setResetTrigger((resetCount) => resetCount + 1);
   }
@@ -83,8 +92,8 @@ export default function Home() {
   const onCombinationSelect = (selectedCombination) => {
     setIsCombinationPickerOpen(false);
 
-    const playerScore = score.find((score) => score.playerId === players[currentPlayerIndex].id);
-    playerScore.score = playerScore.score.map(combination => {
+    let playerScore = gameBoard.find((player) => player.id === gameBoard[currentPlayerIndex].id).score;
+    playerScore = playerScore.map(combination => {
       if (combination.type === selectedCombination.type) {
         return { ...combination, score: selectedCombination.calculateScore(dices.map(dice => dice.value)) };
       } else {
@@ -92,7 +101,15 @@ export default function Home() {
       }
     });
 
-    setScore(prev => prev.map(score => score.playerId === playerScore.playerId ? playerScore : score));
+    const updatedGameBoard = gameBoard.map(player => {
+      if (player.id === gameBoard[currentPlayerIndex].id) {
+        return { ...player, score: playerScore };
+      } else {
+        return { ...player };
+      }
+    });
+
+    setGameBoard(updatedGameBoard);
     switchPlayer();
   }
 
@@ -104,26 +121,43 @@ export default function Home() {
     if (currentRoundOfPlayer >= MAX_ROUNDS_PER_PLAYER) {
 
       setTimeout(() => {
-        console.log("test test")
         const diceValues = dices.map(dice => dice.value);
         const allowed = [];
         YATZY_COMBINATIONS.forEach((combination) => {
-          if (combination.isValidCombination(diceValues) && isCombinationAvailableForPlayer(players[currentPlayerIndex].id, combination.type, score)) {
+          if (combination.isValidCombination(diceValues) && isCombinationAvailableForPlayer(gameBoard[currentPlayerIndex].id, gameBoard, combination.type)) {
             allowed.push(combination);
 
           }
         })
-        console.log(allowed)
+
         setAllowedCombinations(allowed);
         setIsCombinationPickerOpen(true);
-
       }, 1000);
     }
   }, [dices]);
 
   /* ----------------------------------------------------------- 
+                                ON RELOAD 
+  -----------------------------------------------------------  
+  useEffect(() => {
+    oneReload()
+  }, [])
+
+  const oneReload = () => {
+    console.log("reloaded")
+    const loadedCurrentPlayState = localStorage.getItem('currentPlayState')
+    console.log(loadedCurrentPlayState)
+    setGameBoard(loadedCurrentPlayState);
+  }
+*/
+  /* ----------------------------------------------------------- 
                                 RENDER 
   -----------------------------------------------------------  */
+
+  if (!gameBoard) {
+    return <PlayerSetup onStartGame={handleStartGame} />;
+  }
+
 
   return (
     <div className="min-h-screen flex flex-col items-center justify-center gap-4 sm:gap-6 md:gap-8 bg-gray-600 px-4 py-6 sm:py-8">
@@ -131,26 +165,26 @@ export default function Home() {
 
       {/* ---- Player Cards ---- */}
       <div className="flex flex-wrap justify-center items-center gap-2 sm:gap-3 md:gap-4 w-full max-w-md md:max-w-none">
-        {players.map((player, index) => (
+        {gameBoard.map((player, index) => (
           <div
             key={player.id}
             className={[
               "relative flex items-center",
               "flex-1 min-w-[80px] max-w-[140px] sm:min-w-[100px] sm:max-w-[180px]",
-              "h-16", // feste Höhe für alle Cards
+              "h-16",
               "px-3 sm:px-4 md:px-6",
               "rounded-xl shadow-lg transition-all duration-300",
               index === currentPlayerIndex
                 ? "bg-emerald-500 text-gray-900 ring-2 ring-emerald-300"
-                : "text-white border border-dotted",
+                : "text-white border border-dashed",
             ].join(" ")}
           >
             {index === currentPlayerIndex && (
-              <div className="absolute inset-x-0 bottom-3 grid grid-cols-3 gap-1 px-3">
+              <div className="absolute inset-x-0 bottom-0 grid grid-cols-3 gap-1 px-3">
                 {Array.from({ length: currentRoundOfPlayer }).map((_, i) => (
                   <span
                     key={i}
-                    className="h-1 bg-emerald-900 rounded-full"
+                    className="h-1.5 bg-emerald-900 rounded-full"
                   />
                 ))}
               </div>
@@ -189,7 +223,7 @@ export default function Home() {
       </button>
 
       <CombinationPicker onSelect={onCombinationSelect} isOpen={isCombinationPickerOpen} allowedCombinations={allowedCombinations} diceValues={dices.map(dice => dice.value)} />
-      <Scoreboard players={players} currentScore={score} isCombinationPickerOpen={isCombinationPickerOpen} />
+      <Scoreboard gameBoard={gameBoard} isCombinationPickerOpen={isCombinationPickerOpen} />
     </div>
   );
 }

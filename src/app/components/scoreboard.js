@@ -4,16 +4,18 @@ import { useState } from "react";
 import { BONUS_MIN_NEEDED_POINTS, BONUS_REWARD, YATZY_COMBINATIONS } from "@/utils/const";
 import { AppsListDetail20Regular } from "@fluentui/react-icons";
 import { AnimatePresence, motion } from "framer-motion";
+import { getPlayerScore } from "@/utils/utils";
 
-export default function Scoreboard({ players, currentScore = [], isCombinationPickerOpen = false }) {
+export default function Scoreboard({ gameBoard, isCombinationPickerOpen = false }) {
   const [isOpen, setIsOpen] = useState(false);
 
   const upperSection = YATZY_COMBINATIONS.filter((c) => c.section === "upper");
   const lowerSection = YATZY_COMBINATIONS.filter((c) => c.section === "lower");
 
+
   const getScoreForPlayerByType = (playerId, type) => {
-    const playerScore = currentScore.find((socre) => socre.playerId === playerId)
-    const scoreForType = playerScore.score.find(score => score.type === type).score
+    const playerScore = getPlayerScore(playerId, gameBoard);
+    const scoreForType = playerScore.find(score => score.type === type).score
 
     if (scoreForType) {
       return scoreForType
@@ -24,8 +26,8 @@ export default function Scoreboard({ players, currentScore = [], isCombinationPi
   }
 
   const getSumOfUpperSectionForPlayer = (playerId) => {
-    const playerScore = currentScore.find((socre) => socre.playerId === playerId).score
-    const playerScoreUpperSection = playerScore.filter(t => upperSection.map(s => s.type).includes(t.type)).map(s => s.score).filter(t => t)
+    const playerScore = getPlayerScore(playerId, gameBoard);
+    const playerScoreUpperSection = playerScore.filter(t => upperSection.map(s => s.type).includes(t.type)).map(s => s.score).filter(t => t !== undefined && t !== null)
     const sum = playerScoreUpperSection.reduce(
       (accumulator, currentValue) => accumulator + currentValue,
       0,
@@ -35,7 +37,7 @@ export default function Scoreboard({ players, currentScore = [], isCombinationPi
   }
 
   const calculateBonus = (playerId) => {
-    const playerScore = currentScore.find((socre) => socre.playerId === playerId).score
+    const playerScore = getPlayerScore(playerId, gameBoard);
     const playerScoreUpperSection = playerScore.filter(t => upperSection.map(s => s.type).includes(t.type))
     const isUpperSectionFullyFilledOut = !playerScoreUpperSection.some(score => score.score === undefined)
 
@@ -55,7 +57,7 @@ export default function Scoreboard({ players, currentScore = [], isCombinationPi
   const getSumOfLowerSectionForPlayer = (playerId) => {
     const sumUpperSection = getSumOfUpperSectionForPlayer(playerId)
 
-    const playerScore = currentScore.find((socre) => socre.playerId === playerId).score
+    const playerScore = getPlayerScore(playerId, gameBoard)
     const playerScoreLowerSection = playerScore.filter(t => lowerSection.map(s => s.type).includes(t.type)).map(s => s.score).filter(t => t)
     const sumLowerSection = playerScoreLowerSection.reduce(
       (accumulator, currentValue) => accumulator + currentValue,
@@ -140,7 +142,7 @@ export default function Scoreboard({ players, currentScore = [], isCombinationPi
                     <tr>
                       <th className="text-left py-2 px-3 text-gray-400 font-medium border-b border-gray-700 w-40">
                       </th>
-                      {players.map((player) => (
+                      {gameBoard.map((player) => (
                         <th
                           key={player.id}
                           className="py-2 px-3 text-center font-semibold border-b border-gray-700 text-emerald-300 min-w-20 max-w-[140px] truncate"
@@ -161,7 +163,7 @@ export default function Scoreboard({ players, currentScore = [], isCombinationPi
                         <td className="py-2 px-3 text-gray-300 font-medium">
                           {combo.label}
                         </td>
-                        {players.map((player) => (
+                        {gameBoard.map((player) => (
                           <td
                             key={player.id}
                             className="py-2 px-3 text-center text-gray-500"
@@ -177,7 +179,7 @@ export default function Scoreboard({ players, currentScore = [], isCombinationPi
                       <td className="py-2 px-3 text-emerald-300 font-semibold">
                         Summe oben
                       </td>
-                      {players.map((player) => (
+                      {gameBoard.map((player) => (
                         <td
                           key={player.id}
                           className="py-2 px-3 text-center font-semibold text-emerald-400"
@@ -192,7 +194,7 @@ export default function Scoreboard({ players, currentScore = [], isCombinationPi
                       <td className="py-2 px-3 text-emerald-300 font-semibold">
                         {"Bonus (≥ 63)"}
                       </td>
-                      {players.map((player) => (
+                      {gameBoard.map((player) => (
                         <td
                           key={player.id}
                           className="py-2 px-3 text-center font-semibold text-gray-500"
@@ -211,7 +213,7 @@ export default function Scoreboard({ players, currentScore = [], isCombinationPi
                         <td className="py-2 px-3 text-gray-300 font-medium">
                           {combo.label}
                         </td>
-                        {players.map((player) => (
+                        {gameBoard.map((player) => (
                           <td
                             key={player.id}
                             className="py-2 px-3 text-center text-gray-500"
@@ -227,7 +229,7 @@ export default function Scoreboard({ players, currentScore = [], isCombinationPi
                       <td className="py-3 px-3 text-emerald-300 font-bold text-base">
                         Gesamt
                       </td>
-                      {players.map((player) => (
+                      {gameBoard.map((player) => (
                         <td
                           key={player.id}
                           className="py-3 px-3 text-center font-bold text-emerald-300 text-base"

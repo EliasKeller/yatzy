@@ -510,6 +510,69 @@ const DEFAULT_SCORE = [
   }
 ]
 
+const INITIAL_SCORE_OF_PLAYER = [
+      {
+        type: YATZY_TYPES.ONE,
+        score: undefined
+      },
+      {
+        type: YATZY_TYPES.TWO,
+        score: undefined
+      },
+      {
+        type: YATZY_TYPES.THREE,
+        score: undefined
+      },
+      {
+        type: YATZY_TYPES.FOUR,
+        score: undefined
+      },
+      {
+        type: YATZY_TYPES.FIVE,
+        score: undefined
+      },
+      {
+        type: YATZY_TYPES.SIX,
+        score: undefined
+      },
+      {
+        type: YATZY_TYPES.ONE_PAIR,
+        score: undefined
+      },
+      {
+        type: YATZY_TYPES.TWO_PAIRS,
+        score: undefined
+      },
+      {
+        type: YATZY_TYPES.THREE_OF_A_KIND,
+        score: undefined
+      },
+      {
+        type: YATZY_TYPES.FOUR_OF_A_KIND,
+        score: undefined
+      },
+      {
+        type: YATZY_TYPES.SMALL_STREET,
+        score: undefined
+      },
+      {
+        type: YATZY_TYPES.BIG_STREET,
+        score: undefined
+      },
+      {
+        type: YATZY_TYPES.FULL_HOUSE,
+        score: undefined
+      },
+      {
+        type: YATZY_TYPES.CHANCE,
+        score: undefined
+      },
+      {
+        type: YATZY_TYPES.YATZY,
+        score: undefined
+      }
+    ]
+
 export {
   MAX_ROUNDS_PER_PLAYER,
   YATZY_TYPES,
@@ -517,5 +580,6 @@ export {
   BONUS_MIN_NEEDED_POINTS,
   BONUS_REWARD,
   DEFAULT_DICES,
-  DEFAULT_SCORE
+  DEFAULT_SCORE,
+  INITIAL_SCORE_OF_PLAYER
 }
