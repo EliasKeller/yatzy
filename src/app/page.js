@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import Dice from "./components/dice";
-import { DEFAULT_DICES, DEFAULT_SCORE, INITIAL_SCORE_OF_PLAYER, MAX_ROUNDS_PER_PLAYER, YATZY_COMBINATIONS, YATZY_TYPES } from "@/utils/const";
+import { DEFAULT_DICES, INITIAL_SCORE_OF_PLAYER, MAX_ROUNDS_PER_PLAYER, YATZY_COMBINATIONS } from "@/utils/const";
 import { isCombinationAvailableForPlayer } from "@/utils/utils";
 import Scoreboard from "./components/scoreboard";
 import CombinationPicker from "./components/combinationPicker";
@@ -11,31 +11,9 @@ import useLocalStorage from "./hooks/useLocalStorage";
 
 export default function Home() {
   /* ----------------------------------------------------------- 
-                                CONSTANTS 
-  -----------------------------------------------------------  */
-  const defaultPlayers = [
-    {
-      id: 1,
-      name: "Player 1",
-      score: 0
-    },
-    {
-      id: 2,
-      name: "Player 2",
-      score: 0
-    },
-    {
-      id: 3,
-      name: "Player 3",
-      score: 0
-    },
-  ];
-
-  /* ----------------------------------------------------------- 
                                 STATES 
   -----------------------------------------------------------  */
   const [gameBoard, setGameBoard] = useLocalStorage("gameBoard", null);
-  const [dices, setDices] = useState(DEFAULT_DICES);
   const [rollTrigger, setRollTrigger] = useState(0);
   const [resetTrigger, setResetTrigger] = useState(0);
   const [isCombinationPickerOpen, setIsCombinationPickerOpen] = useState(false);
@@ -54,7 +32,7 @@ export default function Home() {
       state: {
         activePlayerId: players[0].id,
         currentRound: 0,
-        //dices: DEFAULT_DICES,
+        dices: DEFAULT_DICES,
       }
 
     }
@@ -78,13 +56,17 @@ export default function Home() {
 
   };
 
-  const updateDiceValue = (index, value) => {
-    setDices(prev =>
-      prev.map((d, i) => (i === index ? { ...d, value } : d))
-    );
+  const updateDiceValue = (diceIndex, diceValue) => {
+    setGameBoard((prevGameBoard) => ({
+      ...prevGameBoard,
+      state: {
+        ...prevGameBoard.state,
+        dices: prevGameBoard.state.dices.map((dice, index) => (index === diceIndex ? { ...dice, value: diceValue } : dice))
+      }
+    }));
   };
 
-  const cloneDices = (arr) => arr.map(d => ({ ...d }));
+  const cloneDices = (dices) => dices.map(dice => ({ ...dice }));
 
   const switchPlayer = () => {
 
@@ -97,44 +79,58 @@ export default function Home() {
           ...prevGameBoard.state,
           activePlayerId: nextPlayerId,
           currentRound: 0,
+          dices: cloneDices(DEFAULT_DICES)
         }
       }
     });
 
-    setDices(cloneDices(DEFAULT_DICES));
     setResetTrigger((resetCount) => resetCount + 1);
   }
 
-  const onDiceSelect = (id) => {
-    setDices(prev =>
-      prev.map(d =>
-        d.id === id ? { ...d, isSelected: !d.isSelected } : d
-      )
-    );
+  const onDiceSelect = (diceId) => {
+    setGameBoard((prevGameBoard) => ({
+      ...prevGameBoard,
+      state: {
+        ...prevGameBoard.state,
+        dices: prevGameBoard.state.dices.map(dice => dice.id === diceId ? { ...dice, isSelected: !dice.isSelected } : dice)
+      }
+    }));
   };
 
   const onCombinationSelect = (selectedCombination) => {
     setIsCombinationPickerOpen(false);
-    const diceValues = dices.map(dice => dice.value);
-    let updatedPlayerScore = gameBoard
+
+    const diceValues = gameBoard.state.dices.map(dice => dice.value);
+
+    let updatedPlayerScore = gameBoard.players
       .find((player) => player.id === gameBoard.state.activePlayerId).score
       .map(combination => {
         if (combination.type === selectedCombination.type) {
-          return { ...combination, score: selectedCombination.calculateScore(diceValues) };
+          return {
+            ...combination,
+            score: selectedCombination.calculateScore(diceValues)
+          };
         } else {
-          return { ...combination };
+          return {
+            ...combination
+          };
         }
       });
 
     setGameBoard((prevGameBoard) => {
-      return prevGameBoard.map((player) => {
-        if (player.id !== prevGameBoard.state.activePlayerId) return player;
-
-        return {
-          ...player,
-          score: updatedPlayerScore
-        };
-      });
+      return {
+        ...prevGameBoard,
+        players: prevGameBoard.players.map((player) => {
+          if (player.id !== prevGameBoard.state.activePlayerId) {
+            return player;
+          } 
+          
+          return {
+            ...player,
+            score: updatedPlayerScore
+          };
+        })
+      };
     });
 
     switchPlayer();
@@ -152,7 +148,7 @@ export default function Home() {
     if (gameBoard.state.currentRound >= MAX_ROUNDS_PER_PLAYER) {
 
       setTimeout(() => {
-        const diceValues = dices.map(dice => dice.value);
+        const diceValues = gameBoard.state.dices.map(dice => dice.value);
         const allowed = [];
         YATZY_COMBINATIONS.forEach((combination) => {
           if (combination.isValidCombination(diceValues) && isCombinationAvailableForPlayer(gameBoard.state.activePlayerId, gameBoard, combination.type)) {
@@ -165,7 +161,7 @@ export default function Home() {
         setIsCombinationPickerOpen(true);
       }, 1000);
     }
-  }, [dices]);
+  }, [gameBoard]);
 
   /* ----------------------------------------------------------- 
                                 ON RELOAD 
@@ -231,7 +227,7 @@ export default function Home() {
 
       {/* ---- Dices ---- */}
       <div className="flex gap-2 sm:gap-3 md:gap-4 flex-wrap justify-center max-w-xs sm:max-w-md md:max-w-none">
-        {dices.map((dice, index) => (
+        {gameBoard.state.dices.map((dice, index) => (
           <Dice key={dice.id}
             id={dice.id}
             index={index}
@@ -253,7 +249,7 @@ export default function Home() {
         {"Roll the dices!"}
       </button>
 
-      <CombinationPicker onSelect={onCombinationSelect} isOpen={isCombinationPickerOpen} allowedCombinations={allowedCombinations} diceValues={dices.map(dice => dice.value)} />
+      <CombinationPicker onSelect={onCombinationSelect} isOpen={isCombinationPickerOpen} allowedCombinations={allowedCombinations} diceValues={gameBoard.state.dices.map(dice => dice.value)} />
       <Scoreboard gameBoard={gameBoard} isCombinationPickerOpen={isCombinationPickerOpen} />
     </div>
   );
