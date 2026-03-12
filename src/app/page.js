@@ -163,6 +163,35 @@ export default function Home() {
     setGameBoard(null);
   }
 
+  const handleTerminateForCurrentPlayer = () => {
+    // TBD
+    /*const currentIndex = gameBoard.players.findIndex(player => player.id === gameBoard.state.activePlayerId);
+    const nextPlayerId = gameBoard.players[(currentIndex + 1) % gameBoard.players.length].id;
+
+    setGameBoard((prevGameBoard) => {
+      return {
+        ...prevGameBoard,
+        state: {
+          ...prevGameBoard.state,
+          activePlayerId: nextPlayerId,
+          currentRound: 0,
+          dices: cloneDices(DEFAULT_DICES),
+          isCombinationPickerOpen: false
+        },
+        players: prevGameBoard.players.map((player) => {
+          if (player.id !== prevGameBoard.state.activePlayerId) {
+            return player;
+          }
+
+          return {
+            ...player,
+            isTerminated: true,
+          };
+        })
+      };
+    });*/
+  }
+
   /* ----------------------------------------------------------- 
                               EFFECT 
 -----------------------------------------------------------  */
@@ -276,7 +305,7 @@ export default function Home() {
       </div>
 
 
-      <CombinationPicker onSelect={onCombinationSelect} isOpen={gameBoard.state.isCombinationPickerOpen} gameBoard={gameBoard} />
+      <CombinationPicker onSelect={onCombinationSelect} onTerminateForPlayer={handleTerminateForCurrentPlayer} isOpen={gameBoard.state.isCombinationPickerOpen} gameBoard={gameBoard} />
       <ResetMenu onRestartGame={handleRestartGame} onResetWhole={handleResetWhole} />
       <Scoreboard gameBoard={gameBoard} isCombinationPickerOpen={gameBoard.state.isCombinationPickerOpen} />
     </div>

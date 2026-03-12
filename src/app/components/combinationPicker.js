@@ -52,21 +52,21 @@ function DiceIcon({ value, size = 28 }) {
   );
 }
 
-export default function CombinationPicker({ onSelect, isOpen = false, gameBoard = null}) {
+export default function CombinationPicker({ onSelect, onTerminateForPlayer, isOpen = false, gameBoard = null }) {
   const [showHint, setShowHint] = useState(false);
-   const [allowedCombinations, setAllowedCombinations] = useState([]);
+  const [allowedCombinations, setAllowedCombinations] = useState([]);
   const hintTimeoutRef = useRef(null);
 
   const upperSection = YATZY_COMBINATIONS.filter(
     (combination) =>
       combination.section === "upper" &&
-      allowedCombinations.some((allowed) => allowed.type === combination.type)
+      allowedCombinations?.some((allowed) => allowed.type === combination.type)
   );
 
   const lowerSection = YATZY_COMBINATIONS.filter(
     (combination) =>
       combination.section === "lower" &&
-      allowedCombinations.some((allowed) => allowed.type === combination.type)
+      allowedCombinations?.some((allowed) => allowed.type === combination.type)
   );
 
   const showSelectHint = () => {
@@ -102,7 +102,8 @@ export default function CombinationPicker({ onSelect, isOpen = false, gameBoard 
 
       }
     })
-    setAllowedCombinations(allowed);
+
+    setAllowedCombinations(allowed.length > 0 ? allowed : null);
   }, [gameBoard]);
 
   return (
@@ -152,6 +153,8 @@ export default function CombinationPicker({ onSelect, isOpen = false, gameBoard 
                 <div className="w-10 h-1 rounded-full bg-gray-600" />
               </div>
 
+
+
               <div
                 className="flex flex-row items-center justify-center gap-1.5 pt-4"
               >
@@ -160,54 +163,70 @@ export default function CombinationPicker({ onSelect, isOpen = false, gameBoard 
                 ))}
               </div>
 
-              <div className="flex items-center justify-between px-5 pt-4 pb-2">
-                <h2 className="text-xl font-bold text-emerald-400">
-                  Choose a combination
-                </h2>
-              </div>
-
-              {upperSection.length > 0 && (
-                <div className="px-4 pt-2 pb-2">
-                  <p className="pb-2 px-1 text-xs font-bold uppercase tracking-wider text-emerald-500">
-                    Upper Section
-                  </p>
-                  <div className="flex flex-col gap-2">
-                    {upperSection.map((combo) => (
-                      <button
-                        key={combo.type}
-                        onClick={() => onSelect(combo)}
-                        className="flex flex-row items-center justify-start gap-1.5 rounded-xl border border-gray-600/50 bg-gray-700/50 p-2 transition-all cursor-pointer hover:bg-emerald-900/40 hover:border-emerald-700/50 active:scale-95 active:bg-emerald-900/50"
-                      >
-                        <DiceIcon value={DICE_DOTS[combo.type]} size={32} />
-                        <span className="text-xs font-semibold text-gray-300">
-                          {combo.label}
-                        </span>
-                      </button>
-                    ))}
-                  </div>
+              {allowedCombinations === null ? (
+                <div className="flex flex-col gap-5 py-5 items-center justify-center">
+                  <p className="text-gray-400">No valid combinations available</p>
+                  <button
+                    onClick={onTerminateForPlayer}
+                    className="flex-1 px-4 py-3 text-base font-semibold rounded-lg bg-red-500/50 text-red-500 text-white hover:bg-red-700/50 cursor-pointer transition-colors"
+                  >
+                    Terminate Your Game
+                  </button>
                 </div>
+              ) : (
+                <>
+                  <div className="flex items-center justify-between px-5 pt-4 pb-2">
+                    <h2 className="text-xl font-bold text-emerald-400">
+                      Choose a combination
+                    </h2>
+                  </div>
+
+                  {upperSection.length > 0 && (
+                    <div className="px-4 pt-2 pb-2">
+                      <p className="pb-2 px-1 text-xs font-bold uppercase tracking-wider text-emerald-500">
+                        Upper Section
+                      </p>
+                      <div className="flex flex-col gap-2">
+                        {upperSection.map((combo) => (
+                          <button
+                            key={combo.type}
+                            onClick={() => onSelect(combo)}
+                            className="flex flex-row items-center justify-start gap-1.5 rounded-xl border border-gray-600/50 bg-gray-700/50 p-2 transition-all cursor-pointer hover:bg-emerald-900/40 hover:border-emerald-700/50 active:scale-95 active:bg-emerald-900/50"
+                          >
+                            <DiceIcon value={DICE_DOTS[combo.type]} size={32} />
+                            <span className="text-xs font-semibold text-gray-300">
+                              {combo.label}
+                            </span>
+                          </button>
+                        ))}
+                      </div>
+                    </div>
+                  )}
+
+                  {lowerSection.length > 0 && (
+                    <div className="px-4 pt-2 pb-5">
+                      <p className="pb-2 px-1 text-xs font-bold uppercase tracking-wider text-emerald-500">
+                        Lower Section
+                      </p>
+                      <div className="flex flex-col gap-2">
+                        {lowerSection.map((combo) => (
+                          <button
+                            key={combo.type}
+                            onClick={() => onSelect(combo)}
+                            className="flex items-center gap-3 rounded-xl border border-gray-600/50 bg-gray-700/50 p-3.5 transition-all cursor-pointer hover:bg-emerald-900/40 hover:border-emerald-700/50 active:scale-95 active:bg-emerald-900/50"
+                          >
+                            <span className="text-sm font-semibold text-gray-300">
+                              {combo.label}
+                            </span>
+                          </button>
+                        ))}
+                      </div>
+                    </div>
+                  )}
+                </>
               )}
 
-              {lowerSection.length > 0 && (
-                <div className="px-4 pt-2 pb-5">
-                  <p className="pb-2 px-1 text-xs font-bold uppercase tracking-wider text-emerald-500">
-                    Lower Section
-                  </p>
-                  <div className="flex flex-col gap-2">
-                    {lowerSection.map((combo) => (
-                      <button
-                        key={combo.type}
-                        onClick={() => onSelect(combo)}
-                        className="flex items-center gap-3 rounded-xl border border-gray-600/50 bg-gray-700/50 p-3.5 transition-all cursor-pointer hover:bg-emerald-900/40 hover:border-emerald-700/50 active:scale-95 active:bg-emerald-900/50"
-                      >
-                        <span className="text-sm font-semibold text-gray-300">
-                          {combo.label}
-                        </span>
-                      </button>
-                    ))}
-                  </div>
-                </div>
-              )}
+
             </motion.div>
           </div>
         </motion.div>
