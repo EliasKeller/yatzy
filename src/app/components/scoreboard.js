@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { BONUS_MIN_NEEDED_POINTS, BONUS_REWARD, YATZY_COMBINATIONS } from "@/utils/const";
-import { AppsListDetail20Regular } from "@fluentui/react-icons";
+import { AppsListDetail20Regular, ArrowReset20Regular } from "@fluentui/react-icons";
 import { AnimatePresence, motion } from "framer-motion";
 import { getPlayerScore } from "@/utils/utils";
 
@@ -76,8 +76,8 @@ export default function Scoreboard({ gameBoard, isCombinationPickerOpen = false 
         className={`
           fixed bottom-5 right-5 z-[60]
           h-14 w-14 rounded-full
-          bg-emerald-500 text-white
-          shadow-xl shadow-black/30
+          bg-emerald-500 text-gray-900
+          text-bold shadow-sm shadow-black/30
           hover:bg-emerald-600
           active:scale-95
           flex items-center justify-center
@@ -85,7 +85,7 @@ export default function Scoreboard({ gameBoard, isCombinationPickerOpen = false 
         `}
         aria-label="Open scoreboard"
       >
-        <AppsListDetail20Regular className="h-6 w-6" />
+        <AppsListDetail20Regular className="h-6.5 w-6.5" />
       </button>
 
       {/* ---- Modal Backdrop + Content ---- */}

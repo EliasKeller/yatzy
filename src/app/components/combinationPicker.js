@@ -3,6 +3,7 @@
 import { useEffect, useRef, useState } from "react";
 import { YATZY_COMBINATIONS } from "@/utils/const";
 import { AnimatePresence, motion } from "framer-motion";
+import { isCombinationAvailableForPlayer } from "@/utils/utils";
 
 const DICE_DOTS = {
   ONE: 1,
@@ -51,8 +52,9 @@ function DiceIcon({ value, size = 28 }) {
   );
 }
 
-export default function CombinationPicker({ onSelect, isOpen = false, allowedCombinations = [], diceValues = [] }) {
+export default function CombinationPicker({ onSelect, isOpen = false, gameBoard = null}) {
   const [showHint, setShowHint] = useState(false);
+   const [allowedCombinations, setAllowedCombinations] = useState([]);
   const hintTimeoutRef = useRef(null);
 
   const upperSection = YATZY_COMBINATIONS.filter(
@@ -86,6 +88,22 @@ export default function CombinationPicker({ onSelect, isOpen = false, allowedCom
       }
     };
   }, []);
+
+  useEffect(() => {
+    if (!gameBoard) {
+      return
+    }
+
+    const diceValues = gameBoard.state.dices.map(dice => dice.value);
+    const allowed = [];
+    YATZY_COMBINATIONS.forEach((combination) => {
+      if (combination.isValidCombination(diceValues) && isCombinationAvailableForPlayer(gameBoard.state.activePlayerId, gameBoard, combination.type)) {
+        allowed.push(combination);
+
+      }
+    })
+    setAllowedCombinations(allowed);
+  }, [gameBoard]);
 
   return (
     <AnimatePresence>
@@ -137,8 +155,8 @@ export default function CombinationPicker({ onSelect, isOpen = false, allowedCom
               <div
                 className="flex flex-row items-center justify-center gap-1.5 pt-4"
               >
-                {diceValues.map((value, index) => (
-                  <DiceIcon key={index} value={value} size={32} />
+                {gameBoard.state.dices.map((dice, index) => (
+                  <DiceIcon key={dice.id} value={dice.value} size={32} />
                 ))}
               </div>
 

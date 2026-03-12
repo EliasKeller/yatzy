@@ -3,11 +3,11 @@
 import { useEffect, useState } from "react";
 import Dice from "./components/dice";
 import { DEFAULT_DICES, INITIAL_SCORE_OF_PLAYER, MAX_ROUNDS_PER_PLAYER, YATZY_COMBINATIONS } from "@/utils/const";
-import { isCombinationAvailableForPlayer } from "@/utils/utils";
 import Scoreboard from "./components/scoreboard";
 import CombinationPicker from "./components/combinationPicker";
 import PlayerSetup from "./components/player-setup";
 import useLocalStorage from "./hooks/useLocalStorage";
+import ResetMenu from "./components/reset-menu";
 
 export default function Home() {
   /* ----------------------------------------------------------- 
@@ -16,8 +16,7 @@ export default function Home() {
   const [gameBoard, setGameBoard] = useLocalStorage("gameBoard", null);
   const [rollTrigger, setRollTrigger] = useState(0);
   const [resetTrigger, setResetTrigger] = useState(0);
-  const [isCombinationPickerOpen, setIsCombinationPickerOpen] = useState(false);
-  const [allowedCombinations, setAllowedCombinations] = useState([]);
+  const [isDiceRolling, setIsDiceRolling] = useState(false);
 
 
   /* ----------------------------------------------------------- 
@@ -33,6 +32,7 @@ export default function Home() {
         activePlayerId: players[0].id,
         currentRound: 0,
         dices: DEFAULT_DICES,
+        isCombinationPickerOpen: false
       }
 
     }
@@ -49,11 +49,9 @@ export default function Home() {
           currentRound: prevGameBoard.state.currentRound + 1,
         }
       }));
+      setIsDiceRolling(true);
       setRollTrigger((rollCount) => rollCount + 1);
-    } else {
-      switchPlayer();
     }
-
   };
 
   const updateDiceValue = (diceIndex, diceValue) => {
@@ -68,25 +66,6 @@ export default function Home() {
 
   const cloneDices = (dices) => dices.map(dice => ({ ...dice }));
 
-  const switchPlayer = () => {
-
-    setGameBoard((prevGameBoard) => {
-      const currentIndex = prevGameBoard.players.findIndex(player => player.id === prevGameBoard.state.activePlayerId);
-      const nextPlayerId = prevGameBoard.players[(currentIndex + 1) % prevGameBoard.players.length].id;
-      return {
-        ...prevGameBoard,
-        state: {
-          ...prevGameBoard.state,
-          activePlayerId: nextPlayerId,
-          currentRound: 0,
-          dices: cloneDices(DEFAULT_DICES)
-        }
-      }
-    });
-
-    setResetTrigger((resetCount) => resetCount + 1);
-  }
-
   const onDiceSelect = (diceId) => {
     setGameBoard((prevGameBoard) => ({
       ...prevGameBoard,
@@ -97,11 +76,15 @@ export default function Home() {
     }));
   };
 
+  const onRollingIsDone = () => {
+    setIsDiceRolling(false);
+  }
+
   const onCombinationSelect = (selectedCombination) => {
-    setIsCombinationPickerOpen(false);
 
     const diceValues = gameBoard.state.dices.map(dice => dice.value);
 
+    // ------ Update Score -----
     let updatedPlayerScore = gameBoard.players
       .find((player) => player.id === gameBoard.state.activePlayerId).score
       .map(combination => {
@@ -117,9 +100,20 @@ export default function Home() {
         }
       });
 
+    // ------ Switch Player -----
+    const currentIndex = gameBoard.players.findIndex(player => player.id === gameBoard.state.activePlayerId);
+    const nextPlayerId = gameBoard.players[(currentIndex + 1) % gameBoard.players.length].id;
+
     setGameBoard((prevGameBoard) => {
       return {
         ...prevGameBoard,
+        state: {
+          ...prevGameBoard.state,
+          activePlayerId: nextPlayerId,
+          currentRound: 0,
+          dices: cloneDices(DEFAULT_DICES),
+          isCombinationPickerOpen: false
+        },
         players: prevGameBoard.players.map((player) => {
           if (player.id !== prevGameBoard.state.activePlayerId) {
             return player;
@@ -133,24 +127,41 @@ export default function Home() {
       };
     });
 
-    switchPlayer();
+
+
+    setResetTrigger((resetCount) => resetCount + 1);
   }
 
   const finalizeTurn = () => {
-    const diceValues = gameBoard.state.dices.map(dice => dice.value);
-    const allowed = [];
-    YATZY_COMBINATIONS.forEach((combination) => {
-      if (combination.isValidCombination(diceValues) && isCombinationAvailableForPlayer(gameBoard.state.activePlayerId, gameBoard, combination.type)) {
-        allowed.push(combination);
-
+    setGameBoard((prevGameBoard) => ({
+      ...prevGameBoard,
+      state: {
+        ...prevGameBoard.state,
+        isCombinationPickerOpen: true
       }
-    })
-
-    setAllowedCombinations(allowed);
-    setIsCombinationPickerOpen(true);
+    }));
 
   }
 
+  const handleRestartGame = () => {
+    setGameBoard((prevGameBoard) => ({
+      ...prevGameBoard,
+      players: prevGameBoard.players.map(player => ({
+        ...player,
+        score: INITIAL_SCORE_OF_PLAYER
+      })),
+      state: {
+        activePlayerId: prevGameBoard.players[0].id,
+        currentRound: 0,
+        dices: DEFAULT_DICES,
+        isCombinationPickerOpen: false
+      }
+    }));
+  }
+
+  const handleResetWhole = () => {
+    setGameBoard(null);
+  }
 
   /* ----------------------------------------------------------- 
                               EFFECT 
@@ -162,27 +173,12 @@ export default function Home() {
     }
 
     if (gameBoard.state.currentRound >= MAX_ROUNDS_PER_PLAYER) {
-
       setTimeout(() => {
         finalizeTurn();
-      }, 1000);
+      }, 1500);
     }
-  }, [gameBoard]);
+  }, [gameBoard?.state?.currentRound]);
 
-  /* ----------------------------------------------------------- 
-                                ON RELOAD 
-  -----------------------------------------------------------  
-  useEffect(() => {
-    oneReload()
-  }, [])
-
-  const oneReload = () => {
-    console.log("reloaded")
-    const loadedCurrentPlayState = localStorage.getItem('currentPlayState')
-    console.log(loadedCurrentPlayState)
-    setGameBoard(loadedCurrentPlayState);
-  }
-*/
   /* ----------------------------------------------------------- 
                                 RENDER 
   -----------------------------------------------------------  */
@@ -244,33 +240,45 @@ export default function Home() {
             onValueChange={updateDiceValue}
             onDiceSelect={onDiceSelect}
             isSelectionDisabled={gameBoard.state.currentRound === 0}
+            onRollingIsDone={onRollingIsDone}
           />
         ))}
       </div>
 
       <div className="flex flex-col md:flex-row gap-2">
-        {gameBoard.state.dices.some(dice => !dice.isSelected) && (
-          <button
-            onClick={rollAll}
-            className={`px-6 sm:px-8 py-2.5 sm:py-3 text-base sm:text-lg font-semibold rounded-lg bg-gray-800 text-white hover:bg-gray-700 cursor-pointer ${!(gameBoard.state.currentRound < MAX_ROUNDS_PER_PLAYER) ? "invisible" : ""}`}
-          >
-            {"Roll the dices!"}
-          </button>
-        )}
+        <button
+          onClick={rollAll}
+          disabled={isDiceRolling}
+          className={`w-48 px-6 sm:px-8 py-2.5 
+              sm:py-3 text-base sm:text-lg font-semibold 
+              rounded-lg bg-gray-800 text-white 
+              border border-gray-700
+              hover:bg-gray-700 cursor-pointer 
+              ${!gameBoard.state.dices.some(dice => !dice.isSelected) || !(gameBoard.state.currentRound < MAX_ROUNDS_PER_PLAYER) || isDiceRolling ?
+              "bg-transparent text-white border border-white border-dashed hover:bg-transparent" : ""}`}
+        >
+          {"Roll Dice"}
+        </button>
 
-        {gameBoard.state.currentRound > 0 && (
-          <button
-            onClick={finalizeTurn}
-            className={`px-6 sm:px-8 py-2.5 sm:py-3 text-base sm:text-lg font-semibold rounded-lg bg-emerald-500 text-white hover:bg-emerald-600 cursor-pointer ${!(gameBoard.state.currentRound < MAX_ROUNDS_PER_PLAYER) ? "invisible" : ""}`}
-          >
-            {"Finalize Turn"}
-          </button>
-        )}
+        <button
+          onClick={finalizeTurn}
+          disabled={isDiceRolling}
+          className={`w-48 px-6 sm:px-8 py-2.5 sm:py-3 
+              text-base sm:text-lg font-semibold 
+              rounded-lg bg-emerald-500 text-gray-900 
+              border border-emerald-500
+              text-bold hover:bg-emerald-600 cursor-pointer 
+              ${!(gameBoard.state.currentRound > 0) || !(gameBoard.state.currentRound < MAX_ROUNDS_PER_PLAYER) || isDiceRolling ?
+              "bg-transparent text-white border border-white border-dashed hover:bg-transparent cursor-default" : ""}`}
+        >
+          {"Select Score"}
+        </button>
       </div>
 
 
-      <CombinationPicker onSelect={onCombinationSelect} isOpen={isCombinationPickerOpen} allowedCombinations={allowedCombinations} diceValues={gameBoard.state.dices.map(dice => dice.value)} />
-      <Scoreboard gameBoard={gameBoard} isCombinationPickerOpen={isCombinationPickerOpen} />
+      <CombinationPicker onSelect={onCombinationSelect} isOpen={gameBoard.state.isCombinationPickerOpen} gameBoard={gameBoard} />
+      <ResetMenu onRestartGame={handleRestartGame} onResetWhole={handleResetWhole} />
+      <Scoreboard gameBoard={gameBoard} isCombinationPickerOpen={gameBoard.state.isCombinationPickerOpen} />
     </div>
   );
 }
