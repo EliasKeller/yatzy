@@ -123,8 +123,8 @@ export default function Home() {
         players: prevGameBoard.players.map((player) => {
           if (player.id !== prevGameBoard.state.activePlayerId) {
             return player;
-          } 
-          
+          }
+
           return {
             ...player,
             score: updatedPlayerScore
@@ -135,6 +135,22 @@ export default function Home() {
 
     switchPlayer();
   }
+
+  const finalizeTurn = () => {
+    const diceValues = gameBoard.state.dices.map(dice => dice.value);
+    const allowed = [];
+    YATZY_COMBINATIONS.forEach((combination) => {
+      if (combination.isValidCombination(diceValues) && isCombinationAvailableForPlayer(gameBoard.state.activePlayerId, gameBoard, combination.type)) {
+        allowed.push(combination);
+
+      }
+    })
+
+    setAllowedCombinations(allowed);
+    setIsCombinationPickerOpen(true);
+
+  }
+
 
   /* ----------------------------------------------------------- 
                               EFFECT 
@@ -148,17 +164,7 @@ export default function Home() {
     if (gameBoard.state.currentRound >= MAX_ROUNDS_PER_PLAYER) {
 
       setTimeout(() => {
-        const diceValues = gameBoard.state.dices.map(dice => dice.value);
-        const allowed = [];
-        YATZY_COMBINATIONS.forEach((combination) => {
-          if (combination.isValidCombination(diceValues) && isCombinationAvailableForPlayer(gameBoard.state.activePlayerId, gameBoard, combination.type)) {
-            allowed.push(combination);
-
-          }
-        })
-
-        setAllowedCombinations(allowed);
-        setIsCombinationPickerOpen(true);
+        finalizeTurn();
       }, 1000);
     }
   }, [gameBoard]);
@@ -242,12 +248,26 @@ export default function Home() {
         ))}
       </div>
 
-      <button
-        onClick={rollAll}
-        className={`px-6 sm:px-8 py-2.5 sm:py-3 text-base sm:text-lg font-semibold rounded-lg bg-gray-800 text-white hover:bg-gray-700 cursor-pointer ${!(gameBoard.state.currentRound < MAX_ROUNDS_PER_PLAYER) ? "invisible" : ""}`}
-      >
-        {"Roll the dices!"}
-      </button>
+      <div className="flex flex-col md:flex-row gap-2">
+        {gameBoard.state.dices.some(dice => !dice.isSelected) && (
+          <button
+            onClick={rollAll}
+            className={`px-6 sm:px-8 py-2.5 sm:py-3 text-base sm:text-lg font-semibold rounded-lg bg-gray-800 text-white hover:bg-gray-700 cursor-pointer ${!(gameBoard.state.currentRound < MAX_ROUNDS_PER_PLAYER) ? "invisible" : ""}`}
+          >
+            {"Roll the dices!"}
+          </button>
+        )}
+
+        {gameBoard.state.currentRound > 0 && (
+          <button
+            onClick={finalizeTurn}
+            className={`px-6 sm:px-8 py-2.5 sm:py-3 text-base sm:text-lg font-semibold rounded-lg bg-emerald-500 text-white hover:bg-emerald-600 cursor-pointer ${!(gameBoard.state.currentRound < MAX_ROUNDS_PER_PLAYER) ? "invisible" : ""}`}
+          >
+            {"Finalize Turn"}
+          </button>
+        )}
+      </div>
+
 
       <CombinationPicker onSelect={onCombinationSelect} isOpen={isCombinationPickerOpen} allowedCombinations={allowedCombinations} diceValues={gameBoard.state.dices.map(dice => dice.value)} />
       <Scoreboard gameBoard={gameBoard} isCombinationPickerOpen={isCombinationPickerOpen} />
