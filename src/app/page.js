@@ -88,28 +88,49 @@ export default function Home() {
   }
 
   const onCombinationSelect = (selectedCombination) => {
+    // ------ Update Score -----
     const diceValues = gameBoard.state.dices.map(dice => dice.value);
 
-    // ------ Update Score -----
-    let updatedPlayerScore = gameBoard.players
-      .find((player) => player.id === gameBoard.state.activePlayerId).score
-      .map(combination => {
-        if (combination.type === selectedCombination.type) {
-          return {
-            ...combination,
-            score: selectedCombination.calculateScore(diceValues)
-          };
-        } else {
-          return {
-            ...combination
-          };
+    let updatedPlayers = gameBoard.players.map((player) => {
+      if (player.id !== gameBoard.state.activePlayerId) {
+        return player;
+      }
+
+      return {
+        ...player,
+        score: player.score.map(combination => {
+          if (combination.type === selectedCombination.type) {
+            return {
+              ...combination,
+              score: selectedCombination.calculateScore(diceValues)
+            };
+          } else {
+            return {
+              ...combination
+            };
+          }
+        })
+      };
+    })
+
+    // ----- Check if Player is Terminated -----
+    const isCurrentPlayerTerminated = updatedPlayers.find(player => player.id === gameBoard.state.activePlayerId)
+      .score.every(score => score.score !== undefined);
+
+    updatedPlayers = updatedPlayers.map(player => {
+      if (player.id === gameBoard.state.activePlayerId) {
+        return {
+          ...player,
+          isTerminated: isCurrentPlayerTerminated
         }
-      });
+      }
+      return player;
+    })
+
 
     // ------ Switch Player -----
-    const currentIndex = gameBoard.players.findIndex(player => player.id === gameBoard.state.activePlayerId);
-    const nextPlayerId = gameBoard.players[(currentIndex + 1) % gameBoard.players.length].id;
-    const isCurrentPlayerTerminated = updatedPlayerScore.every(score => score.score !== undefined);
+    const nextPlayerId = getNextActivePlayerId(updatedPlayers, gameBoard.state.activePlayerId);
+
 
     setGameBoard((prevGameBoard) => {
       return {
@@ -121,17 +142,7 @@ export default function Home() {
           dices: cloneDices(DEFAULT_DICES),
           isCombinationPickerOpen: false
         },
-        players: prevGameBoard.players.map((player) => {
-          if (player.id !== prevGameBoard.state.activePlayerId) {
-            return player;
-          }
-
-          return {
-            ...player,
-            score: updatedPlayerScore,
-            isTerminated: isCurrentPlayerTerminated
-          };
-        })
+        players: updatedPlayers
       };
     });
 
@@ -156,6 +167,8 @@ export default function Home() {
       ...prevGameBoard,
       players: prevGameBoard.players.map(player => ({
         ...player,
+        isTerminated: false,
+        isWinner: false,
         score: INITIAL_SCORE_OF_PLAYER
       })),
       state: {
@@ -172,7 +185,6 @@ export default function Home() {
   }
 
   const handleTerminateForCurrentPlayer = () => {
-    console.log("TERMINATE PLAYER", gameBoard.state.activePlayerId)
     let updatedPlayers = gameBoard.players.map(player => {
       if (player.id === gameBoard.state.activePlayerId) {
         return {
@@ -298,7 +310,7 @@ export default function Home() {
 
         <button
           onClick={finalizeTurn}
-          disabled={isDiceRolling}
+          disabled={isDiceRolling || gameBoard.state.currentRound === 0}
           className={`w-48 px-6 sm:px-8 py-2.5 sm:py-3 
               text-base sm:text-lg font-semibold 
               rounded-lg bg-emerald-500 text-gray-900 
