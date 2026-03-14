@@ -32,7 +32,8 @@ export default function Home() {
         activePlayerId: players[0].id,
         currentRound: 0,
         dices: DEFAULT_DICES,
-        isCombinationPickerOpen: false
+        isCombinationPickerOpen: false,
+        winnerPlayerId: null,
       }
 
     }

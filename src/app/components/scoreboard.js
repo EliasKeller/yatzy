@@ -1,71 +1,13 @@
 "use client";
 
 import { useState } from "react";
-import { BONUS_MIN_NEEDED_POINTS, BONUS_REWARD, YATZY_COMBINATIONS } from "@/utils/const";
-import { AppsListDetail20Regular, ArrowReset20Regular } from "@fluentui/react-icons";
+import { COMBINATIONS_LOWER_SECTION, COMBINATIONS_UPPER_SECTION } from "@/utils/const";
+import { AppsListDetail20Regular, Trophy20Regular } from "@fluentui/react-icons";
 import { AnimatePresence, motion } from "framer-motion";
-import { getPlayerScore } from "@/utils/utils";
+import { getScoreForPlayerByType, getSumOfUpperSectionForPlayer, calculateBonus, getTotalScoreForPlayer } from "@/utils/scoreCalculations";
 
 export default function Scoreboard({ gameBoard, isCombinationPickerOpen = false }) {
   const [isOpen, setIsOpen] = useState(false);
-
-  const upperSection = YATZY_COMBINATIONS.filter((c) => c.section === "upper");
-  const lowerSection = YATZY_COMBINATIONS.filter((c) => c.section === "lower");
-
-
-  const getScoreForPlayerByType = (playerId, type) => {
-    const playerScore = getPlayerScore(playerId, gameBoard);
-    const scoreForType = playerScore.find(score => score.type === type).score
-
-    if (scoreForType) {
-      return scoreForType
-    } else if (scoreForType === null) {
-      return "X"
-    }
-    return "-"
-  }
-
-  const getSumOfUpperSectionForPlayer = (playerId) => {
-    const playerScore = getPlayerScore(playerId, gameBoard);
-    const playerScoreUpperSection = playerScore.filter(t => upperSection.map(s => s.type).includes(t.type)).map(s => s.score).filter(t => t !== undefined && t !== null)
-    const sum = playerScoreUpperSection.reduce(
-      (accumulator, currentValue) => accumulator + currentValue,
-      0,
-    );
-
-    return sum;
-  }
-
-  const calculateBonus = (playerId) => {
-    const playerScore = getPlayerScore(playerId, gameBoard);
-    const playerScoreUpperSection = playerScore.filter(t => upperSection.map(s => s.type).includes(t.type))
-    const isUpperSectionFullyFilledOut = !playerScoreUpperSection.some(score => score.score === undefined)
-
-    if (!isUpperSectionFullyFilledOut) {
-      return "-"
-    }
-
-    const sum = getSumOfUpperSectionForPlayer(playerId)
-
-    if (sum >= BONUS_MIN_NEEDED_POINTS) {
-      return BONUS_REWARD
-    }
-
-    return "X"
-  }
-
-  const getSumOfLowerSectionForPlayer = (playerId) => {
-    const sumUpperSection = getSumOfUpperSectionForPlayer(playerId)
-
-    const playerScore = getPlayerScore(playerId, gameBoard)
-    const playerScoreLowerSection = playerScore.filter(t => lowerSection.map(s => s.type).includes(t.type)).map(s => s.score).filter(t => t)
-    const sumLowerSection = playerScoreLowerSection.reduce(
-      (accumulator, currentValue) => accumulator + currentValue,
-      0,
-    );
-
-    return sumUpperSection + sumLowerSection;
-  }
 
   return (
     <>
@@ -145,30 +87,37 @@ export default function Scoreboard({ gameBoard, isCombinationPickerOpen = false 
                       {gameBoard.players.map((player) => (
                         <th
                           key={player.id}
-                          className="py-2 px-3 text-center font-semibold border-b border-gray-700 text-emerald-300 min-w-20 max-w-[140px] truncate"
+                          className={`py-2 px-3 text-center 
+                            font-semibold border-b border-gray-700 
+                            text-emerald-300 min-w-20 max-w-[140px] truncate
+                            ${gameBoard.state.activePlayerId === player.id ? "underline underline-offset-4" : ""}`}
                         >
                           {player.name}
+                          {gameBoard.state.winnerPlayerId === player.id && (
+                            <Trophy20Regular className="inline-block ml-1 mb-0.5 text-yellow-400" />
+                          )}
+
                         </th>
                       ))}
                     </tr>
                   </thead>
 
                   <tbody>
-                    {/* ---- Oberer Bereich ---- */}
-                    {upperSection.map((combo) => (
+                    {/* ---- UPPER SECTION ---- */}
+                    {COMBINATIONS_UPPER_SECTION.map((combo) => (
                       <tr
                         key={combo.type}
                         className="border-b border-gray-700/50 hover:bg-gray-700/30 transition-colors"
                       >
-                        <td className="py-2 px-3 text-gray-300 font-medium">
+                        <td className="py-2 px-3 text-gray-300 font-bold">
                           {combo.label}
                         </td>
                         {gameBoard.players.map((player) => (
                           <td
                             key={player.id}
-                            className="py-2 px-3 text-center text-gray-500"
+                            className="py-2 px-3 text-center text-gray-300"
                           >
-                            {getScoreForPlayerByType(player.id, combo.type)}
+                            {getScoreForPlayerByType(player.id, combo.type, gameBoard)}
                           </td>
                         ))}
                       </tr>
@@ -184,7 +133,7 @@ export default function Scoreboard({ gameBoard, isCombinationPickerOpen = false 
                           key={player.id}
                           className="py-2 px-3 text-center font-semibold text-emerald-400"
                         >
-                          {getSumOfUpperSectionForPlayer(player.id)}
+                          {getSumOfUpperSectionForPlayer(player.id, gameBoard)}
                         </td>
                       ))}
                     </tr>
@@ -197,28 +146,28 @@ export default function Scoreboard({ gameBoard, isCombinationPickerOpen = false 
                       {gameBoard.players.map((player) => (
                         <td
                           key={player.id}
-                          className="py-2 px-3 text-center font-semibold text-gray-500"
+                          className="py-2 px-3 text-center font-semibold text-gray-300"
                         >
-                          {calculateBonus(player.id)}
+                          {calculateBonus(player.id, gameBoard)}
                         </td>
                       ))}
                     </tr>
 
-                    {/* ---- Unterer Bereich ---- */}
-                    {lowerSection.map((combo) => (
+                    {/* ---- LOWER SECTION ---- */}
+                    {COMBINATIONS_LOWER_SECTION.map((combo) => (
                       <tr
                         key={combo.type}
                         className="border-b border-gray-700/50 hover:bg-gray-700/30 transition-colors"
                       >
-                        <td className="py-2 px-3 text-gray-300 font-medium">
+                        <td className="py-2 px-3 text-gray-300 font-bold">
                           {combo.label}
                         </td>
                         {gameBoard.players.map((player) => (
                           <td
                             key={player.id}
-                            className="py-2 px-3 text-center text-gray-500"
+                            className="py-2 px-3 text-center text-gray-300"
                           >
-                            {getScoreForPlayerByType(player.id, combo.type)}
+                            {getScoreForPlayerByType(player.id, combo.type, gameBoard)}
                           </td>
                         ))}
                       </tr>
@@ -234,7 +183,7 @@ export default function Scoreboard({ gameBoard, isCombinationPickerOpen = false 
                           key={player.id}
                           className="py-3 px-3 text-center font-bold text-emerald-300 text-base"
                         >
-                          {getSumOfLowerSectionForPlayer(player.id)}
+                          {getTotalScoreForPlayer(player.id, gameBoard)}
                         </td>
                       ))}
                     </tr>

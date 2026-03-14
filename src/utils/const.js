@@ -310,67 +310,79 @@ const DEFAULT_DICES = [
 ]
 
 const INITIAL_SCORE_OF_PLAYER = [
-      {
-        type: YATZY_TYPES.ONE,
-        score: undefined
-      },
-      {
-        type: YATZY_TYPES.TWO,
-        score: undefined
-      },
-      {
-        type: YATZY_TYPES.THREE,
-        score: undefined
-      },
-      {
-        type: YATZY_TYPES.FOUR,
-        score: undefined
-      },
-      {
-        type: YATZY_TYPES.FIVE,
-        score: undefined
-      },
-      {
-        type: YATZY_TYPES.SIX,
-        score: undefined
-      },
-      {
-        type: YATZY_TYPES.ONE_PAIR,
-        score: undefined
-      },
-      {
-        type: YATZY_TYPES.TWO_PAIRS,
-        score: undefined
-      },
-      {
-        type: YATZY_TYPES.THREE_OF_A_KIND,
-        score: undefined
-      },
-      {
-        type: YATZY_TYPES.FOUR_OF_A_KIND,
-        score: undefined
-      },
-      {
-        type: YATZY_TYPES.SMALL_STREET,
-        score: undefined
-      },
-      {
-        type: YATZY_TYPES.BIG_STREET,
-        score: undefined
-      },
-      {
-        type: YATZY_TYPES.FULL_HOUSE,
-        score: undefined
-      },
-      {
-        type: YATZY_TYPES.CHANCE,
-        score: undefined
-      },
-      {
-        type: YATZY_TYPES.YATZY,
-        score: undefined
-      }
-    ]
+  {
+    type: YATZY_TYPES.ONE,
+    score: undefined
+  },
+  {
+    type: YATZY_TYPES.TWO,
+    score: undefined
+  },
+  {
+    type: YATZY_TYPES.THREE,
+    score: undefined
+  },
+  {
+    type: YATZY_TYPES.FOUR,
+    score: undefined
+  },
+  {
+    type: YATZY_TYPES.FIVE,
+    score: undefined
+  },
+  {
+    type: YATZY_TYPES.SIX,
+    score: undefined
+  },
+  {
+    type: YATZY_TYPES.ONE_PAIR,
+    score: undefined
+  },
+  {
+    type: YATZY_TYPES.TWO_PAIRS,
+    score: undefined
+  },
+  {
+    type: YATZY_TYPES.THREE_OF_A_KIND,
+    score: undefined
+  },
+  {
+    type: YATZY_TYPES.FOUR_OF_A_KIND,
+    score: undefined
+  },
+  {
+    type: YATZY_TYPES.SMALL_STREET,
+    score: undefined
+  },
+  {
+    type: YATZY_TYPES.BIG_STREET,
+    score: undefined
+  },
+  {
+    type: YATZY_TYPES.FULL_HOUSE,
+    score: undefined
+  },
+  {
+    type: YATZY_TYPES.CHANCE,
+    score: undefined
+  },
+  {
+    type: YATZY_TYPES.YATZY,
+    score: undefined
+  }
+]
+
+const DICE_DOTS = {
+  ONE: 1,
+  TWO: 2,
+  THREE: 3,
+  FOUR: 4,
+  FIVE: 5,
+  SIX: 6,
+};
+
+const COMBINATIONS_UPPER_SECTION = YATZY_COMBINATIONS.filter((c) => c.section === "upper");
+const COMBINATIONS_LOWER_SECTION = YATZY_COMBINATIONS.filter((c) => c.section === "lower");
 
 export {
   MAX_ROUNDS_PER_PLAYER,
@@ -378,5 +390,8 @@ export {
   BONUS_MIN_NEEDED_POINTS,
   BONUS_REWARD,
   DEFAULT_DICES,
-  INITIAL_SCORE_OF_PLAYER
+  INITIAL_SCORE_OF_PLAYER,
+  DICE_DOTS,
+  COMBINATIONS_UPPER_SECTION,
+  COMBINATIONS_LOWER_SECTION
 }
