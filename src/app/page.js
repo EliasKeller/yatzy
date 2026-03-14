@@ -294,6 +294,7 @@ export default function Home() {
             value={dice.value}
             isSelected={dice.isSelected}
             isRolling={isDiceRolling}
+            isSelectionDisabled={gameBoard.state.currentRound == 0}
             onDiceSelect={onDiceSelect}
           />
         ))}
