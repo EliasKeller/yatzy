@@ -4,10 +4,15 @@ import { useEffect, useState } from "react";
 import Dice from "./components/dice";
 import { DEFAULT_DICES, INITIAL_SCORE_OF_PLAYER, MAX_ROUNDS_PER_PLAYER, YATZY_COMBINATIONS } from "@/utils/const";
 import Scoreboard from "./components/scoreboard";
-import CombinationPicker from "./components/combinationPicker";
+import CombinationPicker from "./components/combination-picker";
 import PlayerSetup from "./components/player-setup";
 import useLocalStorage from "./hooks/useLocalStorage";
 import ResetMenu from "./components/reset-menu";
+import { getNextActivePlayerId } from "@/utils/utils";
+import { getWinnerIds } from "@/utils/scoreCalculations";
+import { Trophy20Regular } from "@fluentui/react-icons";
+import PlayerCard from "./components/player-card";
+import PlayerResult from "./components/player-result";
 
 export default function Home() {
   /* ----------------------------------------------------------- 
@@ -26,14 +31,15 @@ export default function Home() {
     const initialGameBoard = {
       players: players.map(player => ({
         ...player,
-        score: INITIAL_SCORE_OF_PLAYER
+        score: INITIAL_SCORE_OF_PLAYER,
+        isTerminated: false,
+        isWinner: false
       })),
       state: {
         activePlayerId: players[0].id,
         currentRound: 0,
         dices: DEFAULT_DICES,
         isCombinationPickerOpen: false,
-        winnerPlayerId: null,
       }
 
     }
@@ -82,7 +88,6 @@ export default function Home() {
   }
 
   const onCombinationSelect = (selectedCombination) => {
-
     const diceValues = gameBoard.state.dices.map(dice => dice.value);
 
     // ------ Update Score -----
@@ -104,6 +109,7 @@ export default function Home() {
     // ------ Switch Player -----
     const currentIndex = gameBoard.players.findIndex(player => player.id === gameBoard.state.activePlayerId);
     const nextPlayerId = gameBoard.players[(currentIndex + 1) % gameBoard.players.length].id;
+    const isCurrentPlayerTerminated = updatedPlayerScore.every(score => score.score !== undefined);
 
     setGameBoard((prevGameBoard) => {
       return {
@@ -122,7 +128,8 @@ export default function Home() {
 
           return {
             ...player,
-            score: updatedPlayerScore
+            score: updatedPlayerScore,
+            isTerminated: isCurrentPlayerTerminated
           };
         })
       };
@@ -165,9 +172,35 @@ export default function Home() {
   }
 
   const handleTerminateForCurrentPlayer = () => {
-    // TBD
-    /*const currentIndex = gameBoard.players.findIndex(player => player.id === gameBoard.state.activePlayerId);
-    const nextPlayerId = gameBoard.players[(currentIndex + 1) % gameBoard.players.length].id;
+    console.log("TERMINATE PLAYER", gameBoard.state.activePlayerId)
+    let updatedPlayers = gameBoard.players.map(player => {
+      if (player.id === gameBoard.state.activePlayerId) {
+        return {
+          ...player,
+          isTerminated: true,
+          score: player.score.map(score => ({
+            ...score,
+            score: score.score === undefined ? null : score.score
+          }))
+        }
+      }
+      return player;
+    })
+
+    const nextPlayerId = getNextActivePlayerId(updatedPlayers, gameBoard.state.activePlayerId);
+
+    if (!nextPlayerId) {
+      const winnerIds = getWinnerIds(updatedPlayers);
+      updatedPlayers = updatedPlayers.map(player => {
+        if (winnerIds.includes(player.id)) {
+          return {
+            ...player,
+            isWinner: true
+          }
+        }
+        return player;
+      });
+    }
 
     setGameBoard((prevGameBoard) => {
       return {
@@ -177,20 +210,11 @@ export default function Home() {
           activePlayerId: nextPlayerId,
           currentRound: 0,
           dices: cloneDices(DEFAULT_DICES),
-          isCombinationPickerOpen: false
+          isCombinationPickerOpen: false,
         },
-        players: prevGameBoard.players.map((player) => {
-          if (player.id !== prevGameBoard.state.activePlayerId) {
-            return player;
-          }
-
-          return {
-            ...player,
-            isTerminated: true,
-          };
-        })
+        players: updatedPlayers
       };
-    });*/
+    });
   }
 
   /* ----------------------------------------------------------- 
@@ -218,6 +242,16 @@ export default function Home() {
   }
 
 
+  if (gameBoard.players.some(player => player.isWinner)) {
+
+
+    return (
+      <>
+        <PlayerResult gameBoard={gameBoard} onRestartGame={handleRestartGame} onResetWhole={handleResetWhole} />
+      </>
+    );
+  }
+
   return (
     <div className="min-h-screen flex flex-col items-center justify-center gap-4 sm:gap-6 md:gap-8 bg-gray-600 px-4 py-6 sm:py-8">
       <h1 className="text-4xl sm:text-4xl md:text-5xl font-bold text-white">Yatzy</h1>
@@ -225,35 +259,7 @@ export default function Home() {
       {/* ---- Player Cards ---- */}
       <div className="flex flex-wrap justify-center items-center gap-2 sm:gap-3 md:gap-4 w-full max-w-md md:max-w-none">
         {gameBoard.players.map((player) => (
-          <div
-            key={player.id}
-            className={[
-              "relative flex items-center",
-              "flex-1 min-w-[80px] max-w-[140px] sm:min-w-[100px] sm:max-w-[180px]",
-              "h-16",
-              "px-3 sm:px-4 md:px-6",
-              "rounded-xl shadow-lg transition-all duration-300",
-              player.id === gameBoard.state.activePlayerId
-                ? "bg-emerald-500 text-gray-900 ring-2 ring-emerald-300"
-                : "text-white border border-dashed",
-            ].join(" ")}
-          >
-            {player.id === gameBoard.state.activePlayerId && (
-              <div className="absolute inset-x-0 bottom-0 grid grid-cols-3 gap-1 px-3">
-                {Array.from({ length: gameBoard.state.currentRound }).map((_, i) => (
-                  <span
-                    key={i}
-                    className="h-1.5 bg-emerald-900 rounded-full"
-                  />
-                ))}
-              </div>
-            )}
-
-            {/* Name */}
-            <h3 className="text-sm sm:text-lg md:text-xl font-bold truncate">
-              {player.name}
-            </h3>
-          </div>
+          <PlayerCard key={player.id} player={player} gameBoard={gameBoard} />
         ))}
       </div>
 

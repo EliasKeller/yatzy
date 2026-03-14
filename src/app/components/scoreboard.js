@@ -93,7 +93,7 @@ export default function Scoreboard({ gameBoard, isCombinationPickerOpen = false 
                             ${gameBoard.state.activePlayerId === player.id ? "underline underline-offset-4" : ""}`}
                         >
                           {player.name}
-                          {gameBoard.state.winnerPlayerId === player.id && (
+                          {player.isWinner && (
                             <Trophy20Regular className="inline-block ml-1 mb-0.5 text-yellow-400" />
                           )}
 

@@ -67,11 +67,25 @@ const getTotalScoreForPlayer = (playerId, gameBoard) => {
     return sumUpperSection + sumLowerSection + (bonus === BONUS_REWARD ? BONUS_REWARD : 0);
 }
 
+const getWinnerIds = (players) => {
+    const scores = players.map(player => ({
+        id: player.id,
+        score: getTotalScoreForPlayer(player.id, { players })
+    }));
+
+    const maxScore = Math.max(...scores.map(p => p.score));
+
+    return scores
+        .filter(p => p.score === maxScore)
+        .map(p => p.id);
+};
+
 export {
     getPlayerScore,
     getScoreForPlayerByType,
     getSumOfUpperSectionForPlayer,
     calculateBonus,
-    getTotalScoreForPlayer
+    getTotalScoreForPlayer,
+    getWinnerIds
 }
 
