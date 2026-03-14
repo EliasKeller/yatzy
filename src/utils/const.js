@@ -273,7 +273,7 @@ const YATZY_COMBINATIONS = [
     },
     calculateScore(diceValues = []) {
       return 50;
-    }
+    } 
   },
 ];
 
