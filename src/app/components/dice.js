@@ -2,45 +2,41 @@
 
 import { useEffect, useState } from "react";
 
-export default function Dice({ index, id, initValue, initIsSelected, rollTrigger, resetTrigger, onValueChange, onDiceSelect, isSelectionDisabled, onRollingIsDone }) {
-  const [currentValue, setCurrentValue] = useState(initValue);
-  const [isRolling, setIsRolling] = useState(false);
-  const [isSelected, setIsSelected] = useState(initIsSelected);
-
+export default function Dice({
+  id,
+  value,
+  isSelected,
+  isRolling,
+  onDiceSelect,
+  isSelectionDisabled,
+}) {
+  const [displayValue, setDisplayValue] = useState(value);
 
   useEffect(() => {
-    setCurrentValue(initValue);
-    setIsSelected(initIsSelected);
-  }, [resetTrigger, initValue, initIsSelected]);
-
-  useEffect(() => {
-    if (rollTrigger === 0) {
+    if (!isRolling) {
+      setDisplayValue(value);
       return;
     }
 
-    setIsRolling(true);
-    let rollCount = 0;
+    if (isSelected) {
+      setDisplayValue(value);
+      return;
+    }
 
-    const rollInterval = setInterval(() => {
-      if (isSelected) {
-        return;
-      }
-      setCurrentValue(Math.floor(Math.random() * 6) + 1);
-      rollCount++;
+    const interval = setInterval(() => {
+      setDisplayValue(Math.floor(Math.random() * 6) + 1);
+    }, 80);
 
-      if (rollCount >= 10) {
-        clearInterval(rollInterval);
-        const foundValue = Math.floor(Math.random() * 6) + 1;
-        setCurrentValue(foundValue);
-        onValueChange(index, foundValue);
-        setIsRolling(false);
-        onRollingIsDone();
-      }
-    }, 100);
+    const timeout = setTimeout(() => {
+      clearInterval(interval);
+      setDisplayValue(value);
+    }, 700);
 
-    return () => clearInterval(rollInterval);
-  }, [rollTrigger]);
-
+    return () => {
+      clearInterval(interval);
+      clearTimeout(timeout);
+    };
+  }, [isRolling, value, isSelected]);
 
   const getDotPositions = (number) => {
     const positions = {
@@ -65,35 +61,36 @@ export default function Dice({ index, id, initValue, initIsSelected, rollTrigger
   };
 
   const onSelect = () => {
-    if (isSelectionDisabled) {
+    if (isSelectionDisabled || isRolling) {
       return;
     }
-    setIsSelected(!isSelected);
     onDiceSelect(id);
-
-  }
+  };
 
   return (
     <div
       className={[
-        "relative w-24 h-24 md:h-32 md:w-32  shrink-0  border-4 border-gray-800 rounded-lg shadow-lg",
+        "relative w-24 h-24 md:h-32 md:w-32 shrink-0 border-4 border-gray-800 rounded-lg shadow-lg",
         "transition-transform duration-200 transform-gpu",
-        isRolling ? "animate-[roll_800ms_ease-in-out_infinite]" : "hover:scale-105",
+        isRolling && !isSelected ? "animate-[roll_800ms_ease-in-out_infinite]" : "hover:scale-105",
         isSelected ? "bg-gray-800" : "bg-white",
       ].join(" ")}
       onClick={onSelect}
     >
       <div className="absolute inset-2 grid grid-cols-3 grid-rows-3 gap-1 place-items-center">
         {Array.from({ length: 9 }).map((_, index) => {
-          const shouldShow = getDotPositions(currentValue).some(
+          const shouldShow = getDotPositions(displayValue).some(
             (pos) => positionMap[pos] === index
           );
 
           return (
             <div
               key={index}
-              className={`w-4 h-4 rounded-full transition-all duration-200 transform-gpu ${shouldShow ? `${isSelected ? "bg-white" : "bg-gray-800"} scale-100` : `bg-transparent scale-0`
-                }`}
+              className={`w-4 h-4 rounded-full transition-all duration-200 transform-gpu ${
+                shouldShow
+                  ? `${isSelected ? "bg-white" : "bg-gray-800"} scale-100`
+                  : "bg-transparent scale-0"
+              }`}
             />
           );
         })}

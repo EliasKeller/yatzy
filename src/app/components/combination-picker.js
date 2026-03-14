@@ -51,7 +51,7 @@ export default function CombinationPicker({ onSelect, onTerminateForPlayer, isOp
     const diceValues = gameBoard.state.dices.map(dice => dice.value);
     const allowed = [];
     YATZY_COMBINATIONS.forEach((combination) => {
-      if (combination.isValidCombination(diceValues) && isCombinationAvailableForPlayer(gameBoard.state.activePlayerId, gameBoard, combination.type)) {
+      if (combination.isValidCombination(diceValues) && gameBoard.state.activePlayerId && isCombinationAvailableForPlayer(gameBoard.state.activePlayerId, gameBoard, combination.type)) {
         allowed.push(combination);
 
       }

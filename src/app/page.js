@@ -10,7 +10,6 @@ import useLocalStorage from "./hooks/useLocalStorage";
 import ResetMenu from "./components/reset-menu";
 import { getNextActivePlayerId } from "@/utils/utils";
 import { getWinnerIds } from "@/utils/scoreCalculations";
-import { Trophy20Regular } from "@fluentui/react-icons";
 import PlayerCard from "./components/player-card";
 import PlayerResult from "./components/player-result";
 
@@ -19,8 +18,6 @@ export default function Home() {
                                 STATES 
   -----------------------------------------------------------  */
   const [gameBoard, setGameBoard] = useLocalStorage("gameBoard", null);
-  const [rollTrigger, setRollTrigger] = useState(0);
-  const [resetTrigger, setResetTrigger] = useState(0);
   const [isDiceRolling, setIsDiceRolling] = useState(false);
 
 
@@ -48,27 +45,34 @@ export default function Home() {
   }
 
   const rollAll = () => {
-    if (gameBoard.state.currentRound < MAX_ROUNDS_PER_PLAYER) {
-      setGameBoard((prevGameBoard) => ({
-        ...prevGameBoard,
-        state: {
-          ...prevGameBoard.state,
-          currentRound: prevGameBoard.state.currentRound + 1,
-        }
-      }));
-      setIsDiceRolling(true);
-      setRollTrigger((rollCount) => rollCount + 1);
-    }
-  };
 
-  const updateDiceValue = (diceIndex, diceValue) => {
-    setGameBoard((prevGameBoard) => ({
-      ...prevGameBoard,
+    if (gameBoard.state.currentRound >= MAX_ROUNDS_PER_PLAYER || isDiceRolling) {
+      return;
+    }
+
+    setIsDiceRolling(true);
+
+    const nextDices = gameBoard.state.dices.map((dice) => {
+      if (dice.isSelected) return dice;
+
+      return {
+        ...dice,
+        value: Math.floor(Math.random() * 6) + 1,
+      };
+    });
+
+    setGameBoard((prev) => ({
+      ...prev,
       state: {
-        ...prevGameBoard.state,
-        dices: prevGameBoard.state.dices.map((dice, index) => (index === diceIndex ? { ...dice, value: diceValue } : dice))
-      }
+        ...prev.state,
+        currentRound: prev.state.currentRound + 1,
+        dices: nextDices,
+      },
     }));
+
+    setTimeout(() => {
+      setIsDiceRolling(false);
+    }, 700);
   };
 
   const cloneDices = (dices) => dices.map(dice => ({ ...dice }));
@@ -82,10 +86,6 @@ export default function Home() {
       }
     }));
   };
-
-  const onRollingIsDone = () => {
-    setIsDiceRolling(false);
-  }
 
   const onCombinationSelect = (selectedCombination) => {
     // ------ Update Score -----
@@ -131,6 +131,21 @@ export default function Home() {
     // ------ Switch Player -----
     const nextPlayerId = getNextActivePlayerId(updatedPlayers, gameBoard.state.activePlayerId);
 
+    // ----- Check if Game is Finished -----
+    if (!nextPlayerId) {
+      const winnerIds = getWinnerIds(updatedPlayers);
+      updatedPlayers = updatedPlayers.map(player => {
+        if (winnerIds.includes(player.id)) {
+          return {
+            ...player,
+            isWinner: true
+          }
+        }
+        return player;
+      });
+    }
+
+
 
     setGameBoard((prevGameBoard) => {
       return {
@@ -145,10 +160,6 @@ export default function Home() {
         players: updatedPlayers
       };
     });
-
-
-
-    setResetTrigger((resetCount) => resetCount + 1);
   }
 
   const finalizeTurn = () => {
@@ -256,7 +267,6 @@ export default function Home() {
 
   if (gameBoard.players.some(player => player.isWinner)) {
 
-
     return (
       <>
         <PlayerResult gameBoard={gameBoard} onRestartGame={handleRestartGame} onResetWhole={handleResetWhole} />
@@ -278,17 +288,13 @@ export default function Home() {
       {/* ---- Dices ---- */}
       <div className="flex gap-2 sm:gap-3 md:gap-4 flex-wrap justify-center max-w-xs sm:max-w-md md:max-w-none">
         {gameBoard.state.dices.map((dice, index) => (
-          <Dice key={dice.id}
+          <Dice
+            key={dice.id}
             id={dice.id}
-            index={index}
-            initValue={dice.value}
-            initIsSelected={dice.isSelected}
-            rollTrigger={rollTrigger}
-            resetTrigger={resetTrigger}
-            onValueChange={updateDiceValue}
+            value={dice.value}
+            isSelected={dice.isSelected}
+            isRolling={isDiceRolling}
             onDiceSelect={onDiceSelect}
-            isSelectionDisabled={gameBoard.state.currentRound === 0}
-            onRollingIsDone={onRollingIsDone}
           />
         ))}
       </div>
