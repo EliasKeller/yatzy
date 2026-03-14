@@ -26,7 +26,7 @@ export default function PlayerResult({ gameBoard, onRestartGame, onResetWhole })
 
             <div className="flex flex-wrap justify-center gap-3 sm:gap-4 mb-8 sm:mb-10">
                 {winners.map((winner) => (
-                    <PlayerCard key={winner.id} player={winner} gameBoard={gameBoard} isWinnerState={true} />
+                    <PlayerCard key={winner.id} player={winner} gameBoard={gameBoard} />
                 ))}
             </div>
 
