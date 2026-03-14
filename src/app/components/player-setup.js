@@ -80,7 +80,7 @@ export default function PlayerSetup({ onStartGame }) {
                                     onBlur={saveEdit}
                                     onKeyDown={handleKeyDown}
                                     autoFocus
-                                    className="flex-1 bg-gray-700 text-white px-1.5 py-1.5 rounded-lg border border-emerald-500 outline-none text-sm sm:text-base"
+                                    className="flex-1 bg-gray-700 text-white px-1.5 py-1.5 rounded-lg border border-emerald-500 outline-none text-base"
                                     maxLength={20}
                                 />
                             ) : (
