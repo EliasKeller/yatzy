@@ -84,7 +84,7 @@ export default function CombinationPicker({ onSelect, onTerminateForPlayer, isOp
             </AnimatePresence>
 
             <motion.div
-              className="relative w-full max-h-[85vh] overflow-y-auto rounded-t-2xl md:rounded-xl bg-gray-800 border border-gray-700 text-white shadow-2xl"
+              className="relative w-full max-h-[85vh] overflow-y-auto rounded-t-2xl md:rounded-xl bg-gray-800 border border-gray-700 text-white shadow-2xl pb-[50px] md:pb-0"
               onClick={(e) => e.stopPropagation()}
               initial={{ y: "100%" }}
               animate={{ y: 0, x: 0 }}

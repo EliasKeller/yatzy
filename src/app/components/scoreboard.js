@@ -78,7 +78,7 @@ export default function Scoreboard({ gameBoard, isCombinationPickerOpen = false 
               </div>
 
               {/* ---- Table ---- */}
-              <div className="overflow-x-auto px-4 pb-6">
+              <div className="overflow-x-auto px-4 pb-[50px] md:pb-6">
                 <table className="w-full border-collapse text-sm">
                   <thead>
                     <tr>
